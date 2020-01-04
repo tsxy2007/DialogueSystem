@@ -32,4 +32,5 @@
 *.out
 *.app
 
-.Intermediate
+/Intermediate/*
+/Binaries/*
