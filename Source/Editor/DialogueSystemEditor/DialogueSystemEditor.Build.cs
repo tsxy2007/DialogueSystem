@@ -37,6 +37,7 @@ public class DialogueSystemEditor : ModuleRules
 				"Slate",
 				"SlateCore",
                 "InputCore",
+                "ApplicationCore",
                 "UnrealEd",
                 "LevelEditor",
                 "DialogueSystem",

@@ -29,7 +29,8 @@ public:
 	void SelectAllNodes();
 	bool CanSelectAllNodes()const;
 	void DeleteSelectedNodes();
-	bool CanDeleteNodes();
+	bool CanDeleteNodes() const;
+	void DeleteSelectedDuplicatableNodes();
 	void CutSelectedNodes();
 	bool CanCutNodes()const;
 	void CopySelectedNodes();
