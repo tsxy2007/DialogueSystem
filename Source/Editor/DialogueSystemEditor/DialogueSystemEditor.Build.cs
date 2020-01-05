@@ -23,7 +23,25 @@ public class DialogueSystemEditor : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+                "Core",
+                "CoreUObject",
+                "ApplicationCore",
+                "Engine",
+                "RenderCore",
+                "InputCore",
+                "Slate",
+                "SlateCore",
+                "EditorStyle",
+                "UnrealEd",
+                "AudioEditor",
+                "MessageLog",
+                "GraphEditor",
+                "Kismet",
+                "KismetWidgets",
+                "PropertyEditor",
+                "BlueprintGraph",
+                "ClassViewer",
+                "DialogueSystem",
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
@@ -32,15 +50,11 @@ public class DialogueSystemEditor : ModuleRules
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"CoreUObject",
-				"Engine",
-				"Slate",
-				"SlateCore",
-                "InputCore",
-                "ApplicationCore",
-                "UnrealEd",
-                "LevelEditor",
-                "DialogueSystem",
+                                "AssetRegistry",
+                "AssetTools",
+                "PropertyEditor",
+                "ContentBrowser"
+                
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

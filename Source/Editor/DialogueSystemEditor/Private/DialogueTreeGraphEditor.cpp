@@ -9,6 +9,9 @@
 #include "GraphEditor.h"
 #include "HAL/PlatformApplicationMisc.h"
 #include "EdGraphUtilities.h"
+#include "DialogueTree.h"
+#include "WorkflowTabManager.h"
+#include "TabManager.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraph"
 FDialogueTreeGraphEditor::FDialogueTreeGraphEditor()
@@ -28,6 +31,51 @@ FDialogueTreeGraphEditor::~FDialogueTreeGraphEditor()
 	{
 		Editor->UnregisterForUndo(this);
 	}
+}
+
+void FDialogueTreeGraphEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& TabManager)
+{
+	DocumentManager->SetTabManager(TabManager);
+	FWorkflowCentricApplication::RegisterTabSpawners(TabManager);
+}
+
+void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InObject)
+{
+	UDialogueTree* DialogueTreeToEdit = Cast<UDialogueTree>(InObject);
+	if (DialogueTreeToEdit != nullptr)
+	{
+		DialogueTree = DialogueTreeToEdit;
+	}
+}
+
+FName FDialogueTreeGraphEditor::GetToolkitFName() const
+{
+	return FName();
+}
+
+FText FDialogueTreeGraphEditor::GetBaseToolkitName() const
+{
+	return FText();
+}
+
+FString FDialogueTreeGraphEditor::GetWorldCentricTabPrefix() const
+{
+	return FString();
+}
+
+FLinearColor FDialogueTreeGraphEditor::GetWorldCentricTabColorScale() const
+{
+	return FLinearColor();
+}
+
+FText FDialogueTreeGraphEditor::GetToolkitName() const
+{
+	return FText();
+}
+
+FText FDialogueTreeGraphEditor::GetToolkitToolTipText() const
+{
+	return FText();
 }
 
 FGraphPanelSelectionSet FDialogueTreeGraphEditor::GetSelectedNodes() const
