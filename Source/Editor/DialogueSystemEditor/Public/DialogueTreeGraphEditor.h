@@ -8,6 +8,8 @@
 #include "WorkflowCentricApplication.h"
 #include "NotifyHook.h"
 #include "Color.h"
+#include "WorkflowTabFactory.h"
+#include "WorkflowTabManager.h"
 
 class IToolkitHost;
 class FDocumentTracker;
@@ -32,10 +34,18 @@ public:
 	virtual FText GetToolkitToolTipText() const override;
 	// ~End IToolit Interface
 
+	// ~Begin FNotifyHook Interface
+	virtual void NotifyPostChange(const FPropertyChangedEvent& PropertyChangedEvent, UProperty* PropertyThatChanged) override;
+	//~End FNotifyHook Interface
 
 	// Begin FEditorUndoClient
 	FGraphPanelSelectionSet GetSelectedNodes()const;
 	virtual void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection);
+
+	// Delegates
+	void OnNodeDoubleClicked(class UEdGraphNode* Node);
+	void OnGraphEditorFocused(const TSharedRef<SGraphEditor>& InGraphEditor);
+	void OnNodeTitleCommitted(const FText& NewText, ETextCommit::Type CommitInfo, UEdGraphNode* PropertyThatChanged);
 
 	// Begin of FEditorUndoClient Interface
 	virtual void PostUndo(bool bSuccess) override;
@@ -63,6 +73,17 @@ public:
 	virtual void OnClassListUpdated();
 
 	// End FEditorUndoClient
+
+private:
+	TSharedRef<class SGraphEditor> CreateGraphEditorWidget(UEdGraph* InGraph);
+
+	void CreateInternalWidgets();
+
+	void ExtendMenu();
+
+	void BindCommonCommands();
+
+
 protected:
 	// µ±Ç°Í¼±í
 	TWeakPtr<SGraphEditor> UpdateGraphEdPtr;
@@ -74,5 +95,12 @@ protected:
 private:
 	TSharedPtr<FDocumentTracker> DocumentManager;
 
+	TWeakPtr<FDocumentTabFactory> GraphEditorTabFactoryPtr;
+
 	UDialogueTree* DialogueTree;
+
+	TSharedPtr<class IDetailsView> DetailsView;
+
+
+	uint32 SelectdNodeCount;
 };

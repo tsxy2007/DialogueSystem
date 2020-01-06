@@ -12,6 +12,8 @@
 #include "DialogueTree.h"
 #include "WorkflowTabManager.h"
 #include "TabManager.h"
+#include "EditorStyleSet.h"
+#include "STextBlock.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraph"
 FDialogueTreeGraphEditor::FDialogueTreeGraphEditor()
@@ -78,6 +80,10 @@ FText FDialogueTreeGraphEditor::GetToolkitToolTipText() const
 	return FText();
 }
 
+void FDialogueTreeGraphEditor::NotifyPostChange(const FPropertyChangedEvent & PropertyChangedEvent, UProperty * PropertyThatChanged)
+{
+}
+
 FGraphPanelSelectionSet FDialogueTreeGraphEditor::GetSelectedNodes() const
 {
 	FGraphPanelSelectionSet CurrentSelection;
@@ -91,6 +97,18 @@ FGraphPanelSelectionSet FDialogueTreeGraphEditor::GetSelectedNodes() const
 void FDialogueTreeGraphEditor::OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection)
 {
 
+}
+
+void FDialogueTreeGraphEditor::OnNodeDoubleClicked(UEdGraphNode * Node)
+{
+}
+
+void FDialogueTreeGraphEditor::OnGraphEditorFocused(const TSharedRef<SGraphEditor>& InGraphEditor)
+{
+}
+
+void FDialogueTreeGraphEditor::OnNodeTitleCommitted(const FText & NewText, ETextCommit::Type CommitInfo, UEdGraphNode * PropertyThatChanged)
+{
 }
 
 void FDialogueTreeGraphEditor::PostUndo(bool bSuccess)
@@ -299,4 +317,57 @@ void FDialogueTreeGraphEditor::OnClassListUpdated()
 {
 
 }
+
+TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
+{
+	check(InGraph != nullptr);
+	if (!GraphEditorCommands.IsValid())
+	{
+		CreateCommandList();
+	}
+
+	SGraphEditor::FGraphEditorEvents InEvents;
+	InEvents.OnSelectionChanged = SGraphEditor::FOnSelectionChanged::CreateSP(this, &FDialogueTreeGraphEditor::OnSelectedNodesChanged);
+	InEvents.OnNodeDoubleClicked = FSingleNodeEvent::CreateSP(this, &FDialogueTreeGraphEditor::OnNodeDoubleClicked);
+	InEvents.OnTextCommitted = FOnNodeTextCommitted::CreateSP(this, &FDialogueTreeGraphEditor::OnNodeTitleCommitted);
+
+
+	// make title bar
+	TSharedPtr<SWidget> TitleBarWidget =
+		SNew(SBorder)
+		.BorderImage(FEditorStyle::GetBrush(TEXT("Graph.TitleBackground")))
+		.HAlign(HAlign_Fill)
+		[
+			SNew(SHorizontalBox)
+			+ SHorizontalBox::Slot()
+			.HAlign(HAlign_Center)
+			.FillWidth(1.f)
+			[
+				SNew(STextBlock)
+				.Text(LOCTEXT("BehaviorTreeGraphLabel", "Behavior Tree"))
+			.TextStyle(FEditorStyle::Get(), TEXT("GraphBreadcrumbButtonText"))
+			]
+		];
+	//make full graph editor
+
+	return SNew(SGraphEditor)
+		.AdditionalCommands(GraphEditorCommands)
+		.TitleBar(TitleBarWidget)
+		.GraphToEdit(InGraph)
+		.GraphEvents(InEvents);
+}
+
+void FDialogueTreeGraphEditor::CreateInternalWidgets()
+{
+
+}
+
+void FDialogueTreeGraphEditor::ExtendMenu()
+{
+}
+
+void FDialogueTreeGraphEditor::BindCommonCommands()
+{
+}
+
 #undef LOCTEXT_NAMESPACE
