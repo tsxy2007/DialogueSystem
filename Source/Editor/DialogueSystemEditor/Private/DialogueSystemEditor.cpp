@@ -2,6 +2,7 @@
 
 #include "DialogueSystemEditor.h"
 #include "AssetTypeActions_DialogueTree.h"
+#include "DialogueTreeGraphEditor.h"
 
 #define LOCTEXT_NAMESPACE "FDialogueSystemEditorModule"
 
@@ -22,6 +23,16 @@ void FDialogueSystemEditorModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
+}
+
+TSharedRef<class FDialogueTreeGraphEditor> FDialogueSystemEditorModule::CreateDialogueSystemEditor(EToolkitMode::Type Mode, TSharedPtr<class IToolkitHost> InEditWithInLevel, UObject* InDialogue)
+{
+	TSharedPtr<FDialogueTreeGraphEditor> NewDialogueTreeEditor = MakeShareable(new FDialogueTreeGraphEditor);
+	if (NewDialogueTreeEditor.IsValid())
+	{
+		NewDialogueTreeEditor->InitDialogueTreeEditor(Mode, InEditWithInLevel, InDialogue);
+	}
+	return NewDialogueTreeEditor.ToSharedRef();
 }
 
 #undef LOCTEXT_NAMESPACE
