@@ -338,6 +338,11 @@ void FDialogueTreeGraphEditor::OnClassListUpdated()
 
 }
 
+bool FDialogueTreeGraphEditor::InEditingMode(bool bGraphIsEditable) const
+{
+	return bGraphIsEditable;
+}
+
 TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
 {
 	check(InGraph != nullptr);
@@ -370,8 +375,11 @@ TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget
 		];
 	//make full graph editor
 
+	const bool bGraphIsEditor = InGraph->bEditable;
+
 	return SNew(SGraphEditor)
 		.AdditionalCommands(GraphEditorCommands)
+		.IsEditable(this, &FDialogueTreeGraphEditor::InEditingMode, bGraphIsEditor)
 		.TitleBar(TitleBarWidget)
 		.GraphToEdit(InGraph)
 		.GraphEvents(InEvents);

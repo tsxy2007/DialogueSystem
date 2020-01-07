@@ -74,6 +74,8 @@ public:
 
 	// End FEditorUndoClient
 
+
+	bool InEditingMode(bool bGraphIsEditable)const;
 private:
 	TSharedRef<class SGraphEditor> CreateGraphEditorWidget(UEdGraph* InGraph);
 
