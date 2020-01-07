@@ -95,6 +95,9 @@ public:
 
 
 	bool InEditingMode(bool bGraphIsEditable)const;
+
+	static FText GetLocalizeMode(FName InMode);
+
 	// get dialogue tree
 	UDialogueTree* GetDialogueTree() const;
 

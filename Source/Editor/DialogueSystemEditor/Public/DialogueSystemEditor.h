@@ -28,4 +28,7 @@ public:
 protected:
 	EAssetTypeCategories::Type DialogueTreeAssetCategoryBit;
 #endif
+
+public:
+	static const FName DialogueTreeEditorAppIdentifier;
 };

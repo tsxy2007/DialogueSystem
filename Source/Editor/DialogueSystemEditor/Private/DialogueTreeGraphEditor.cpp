@@ -62,13 +62,13 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 	{
 		DocumentManager = MakeShareable(new FDocumentTracker);
 		DocumentManager->Initialize(ThisPtr);
-		/*{
-			TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FSkillGraphEditorSummoner(ThisPtr,
-				FSkillGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(this, &FDialogueTreeGraphEditor::CreateGraphEditorWidget)
+		{
+			TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FDialogueGraphEditorSummoner(ThisPtr,
+				FDialogueGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(this, &FDialogueTreeGraphEditor::CreateGraphEditorWidget)
 			));
 			GraphEditorTabFactoryPtr = GraphEditorFactory;
 			DocumentManager->RegisterDocumentFactory(GraphEditorFactory);
-		}*/
+		}
 	}
 
 	TArray<UObject*> ObjectsToEdit;
@@ -81,7 +81,17 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 	if (EditedObjects == nullptr || EditedObjects->Num() == 0)
 	{
 		FGraphEditorCommands::Register();
+
+		const TSharedRef<FTabManager::FLayout> DummyLayout = FTabManager::NewLayout("NullLayout")->AddArea(FTabManager::NewPrimaryArea());
+		const bool bCreateDefaultStandaloneMenu = true;
+		const bool bCreateDefaultToolbar = true;
+		InitAssetEditor(Mode, InitToolkitHost, FDialogueSystemEditorModule::DialogueTreeEditorAppIdentifier, DummyLayout, bCreateDefaultStandaloneMenu, bCreateDefaultToolbar, ObjectsToEdit);
+
+		BindCommonCommands();
+		ExtendMenu();
 		CreateInternalWidgets();
+
+		//AddApplicationMode(DialogueTreeMode,MakeShareable(new FDialogue))
 	}
 
 	// TODO: tool bar build 
@@ -94,31 +104,39 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 
 FName FDialogueTreeGraphEditor::GetToolkitFName() const
 {
-	return FName();
+	return FName("Dialogue Tree");
 }
 
 FText FDialogueTreeGraphEditor::GetBaseToolkitName() const
 {
-	return FText();
+	return LOCTEXT("AppLabel","DialogueTree");
 }
 
 FString FDialogueTreeGraphEditor::GetWorldCentricTabPrefix() const
 {
-	return FString();
+	return LOCTEXT("WorldCentricTabPrefix","DialogueTree").ToString();
 }
 
 FLinearColor FDialogueTreeGraphEditor::GetWorldCentricTabColorScale() const
 {
-	return FLinearColor();
+	return FLinearColor(0.0f, 0.0f, 0.2f, 0.5f);
 }
 
 FText FDialogueTreeGraphEditor::GetToolkitName() const
 {
+	if (DialogueTree != nullptr)
+	{
+		return FAssetEditorToolkit::GetLabelForObject(DialogueTree);
+	}
 	return FText();
 }
 
 FText FDialogueTreeGraphEditor::GetToolkitToolTipText() const
 {
+	if (DialogueTree != nullptr)
+	{
+		return FAssetEditorToolkit::GetToolTipTextForObject(DialogueTree);
+	}
 	return FText();
 }
 
@@ -423,6 +441,19 @@ bool FDialogueTreeGraphEditor::InEditingMode(bool bGraphIsEditable) const
 	return bGraphIsEditable;
 }
 
+FText FDialogueTreeGraphEditor::GetLocalizeMode(FName InMode)
+{
+	static TMap<FName, FText> LocModes;
+	if (LocModes.Num() == 0)
+	{
+		LocModes.Add(DialogueTreeMode, LOCTEXT("DialogueTreeMode", "Dialogue Tree"));
+	}
+	check(InMode != NAME_None);
+	const FText* OutDesc = LocModes.Find(InMode);
+	check(OutDesc);
+	return *OutDesc;
+}
+
 UDialogueTree* FDialogueTreeGraphEditor::GetDialogueTree() const
 {
 	return DialogueTree;
@@ -507,10 +538,21 @@ void FDialogueTreeGraphEditor::CreateInternalWidgets()
 
 void FDialogueTreeGraphEditor::ExtendMenu()
 {
+	//struct Local
+	//{
+	//	static void FillEditMenu(FMenuBuilder& MenuBuilder)
+	//	{
+	//		MenuBuilder.BeginSection("EditSearch", LOCTEXT("EditMenu_SearchHeading", "Search"));
+	//		{
+	//			MenuBuilder.AddMenuEntry();
+	//		}
+	//	}
+	//};
 }
 
 void FDialogueTreeGraphEditor::BindCommonCommands()
 {
+	
 }
 
 #undef LOCTEXT_NAMESPACE
