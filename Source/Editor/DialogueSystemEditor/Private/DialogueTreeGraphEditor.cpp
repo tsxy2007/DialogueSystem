@@ -14,8 +14,15 @@
 #include "TabManager.h"
 #include "EditorStyleSet.h"
 #include "STextBlock.h"
+#include "PropertyEditorModule.h"
+#include "ModuleManager.h"
+#include "AssetEditorToolkit.h"
+#include "GraphEditorActions.h"
 
-#define LOCTEXT_NAMESPACE "DialogueGraph"
+#define LOCTEXT_NAMESPACE "DialogueTreeGraphEditor"
+
+const FName FDialogueTreeGraphEditor::DialogueTreeMode(TEXT("DialogueTree"));
+
 FDialogueTreeGraphEditor::FDialogueTreeGraphEditor()
 {
 	UEditorEngine* Editor = (UEditorEngine*)GEngine;
@@ -24,6 +31,8 @@ FDialogueTreeGraphEditor::FDialogueTreeGraphEditor()
 		Editor->RegisterForUndo(this);
 	}
 	//OnClassListUpdatedDelegateHandle = FGraphNodeClassHelper::OnPackageListUpdated.
+
+	DialogueTree = nullptr;
 }
 
 FDialogueTreeGraphEditor::~FDialogueTreeGraphEditor()
@@ -68,6 +77,19 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 		ObjectsToEdit.Add(DialogueTree);
 	}
 
+	const TArray<UObject*>* EditedObjects = GetObjectsCurrentlyBeingEdited();
+	if (EditedObjects == nullptr || EditedObjects->Num() == 0)
+	{
+		FGraphEditorCommands::Register();
+		CreateInternalWidgets();
+	}
+
+	// TODO: tool bar build 
+	// TODO: end;
+
+	SetCurrentMode(DialogueTreeMode);
+	OnClassListUpdated();
+	RegenerateMenusAndToolbars();
 }
 
 FName FDialogueTreeGraphEditor::GetToolkitFName() const
@@ -129,6 +151,64 @@ void FDialogueTreeGraphEditor::OnGraphEditorFocused(const TSharedRef<SGraphEdito
 
 void FDialogueTreeGraphEditor::OnNodeTitleCommitted(const FText & NewText, ETextCommit::Type CommitInfo, UEdGraphNode * PropertyThatChanged)
 {
+}
+
+void FDialogueTreeGraphEditor::OnAddInputPin()
+{
+}
+
+bool FDialogueTreeGraphEditor::CanAddInputPin() const
+{
+	return false;
+}
+
+void FDialogueTreeGraphEditor::OnRemoveInputPin()
+{
+}
+
+bool FDialogueTreeGraphEditor::CanRemoveInputPin() const
+{
+	return false;
+}
+
+void FDialogueTreeGraphEditor::SearchTree()
+{
+}
+
+bool FDialogueTreeGraphEditor::CanSearchTree() const
+{
+	return false;
+}
+
+void FDialogueTreeGraphEditor::JumpToNode(const UEdGraphNode * Node)
+{
+}
+
+bool FDialogueTreeGraphEditor::IsPropertyEditable() const
+{
+	return false;
+}
+
+void FDialogueTreeGraphEditor::OnPackageSaved(const FString & PackageFileName, UObject * Outer)
+{
+}
+
+void FDialogueTreeGraphEditor::OnFinishedChangingProperties(const FPropertyChangedEvent & PropertyChangedEvent)
+{
+}
+
+void FDialogueTreeGraphEditor::UpdateToolBar()
+{
+}
+
+FGraphAppearanceInfo FDialogueTreeGraphEditor::GetGraphAppearance() const
+{
+	return FGraphAppearanceInfo();
+}
+
+bool FDialogueTreeGraphEditor::IsEditingMode(bool bGraphIsEditable) const
+{
+	return false;
 }
 
 void FDialogueTreeGraphEditor::PostUndo(bool bSuccess)
@@ -343,6 +423,33 @@ bool FDialogueTreeGraphEditor::InEditingMode(bool bGraphIsEditable) const
 	return bGraphIsEditable;
 }
 
+UDialogueTree* FDialogueTreeGraphEditor::GetDialogueTree() const
+{
+	return DialogueTree;
+}
+
+TSharedRef<SWidget> FDialogueTreeGraphEditor::SpawnProperties()
+{
+	return SNew(SVerticalBox)
+		+SVerticalBox::Slot()
+		.FillHeight(1.0f)
+		.HAlign(HAlign_Fill)
+		[
+			DetailsView.ToSharedRef()
+		];
+}
+
+TSharedRef<SWidget> FDialogueTreeGraphEditor::SpawnSearch()
+{
+	return SNew(SVerticalBox)
+		+ SVerticalBox::Slot()
+		.FillHeight(1.0)
+		.HAlign(HAlign_Fill)
+		[
+			SNew(STextBlock)
+		];
+}
+
 TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
 {
 	check(InGraph != nullptr);
@@ -387,7 +494,15 @@ TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget
 
 void FDialogueTreeGraphEditor::CreateInternalWidgets()
 {
-
+	// ≥ı ºªØ Ù–‘
+	FPropertyEditorModule& PropertyEditorModule = FModuleManager::GetModuleChecked<FPropertyEditorModule>("PropertyEditor");
+	FDetailsViewArgs DetailViewArgs(false, false, true, FDetailsViewArgs::HideNameArea, false);
+	DetailViewArgs.NotifyHook = this;
+	DetailViewArgs.DefaultsOnlyVisibility = EEditDefaultsOnlyNodeVisibility::Hide;
+	DetailsView = PropertyEditorModule.CreateDetailView(DetailViewArgs);
+	DetailsView->SetObject(nullptr);
+	DetailsView->SetIsPropertyEditingEnabledDelegate(FIsPropertyEditingEnabled::CreateSP(this, &FDialogueTreeGraphEditor::IsPropertyEditable));
+	DetailsView->OnFinishedChangingProperties().AddSP(this, &FDialogueTreeGraphEditor::OnFinishedChangingProperties);
 }
 
 void FDialogueTreeGraphEditor::ExtendMenu()

@@ -13,6 +13,7 @@
 
 class IToolkitHost;
 class FDocumentTracker;
+class UDialogueTree;
 /**
  * 
  */
@@ -47,6 +48,24 @@ public:
 	void OnGraphEditorFocused(const TSharedRef<SGraphEditor>& InGraphEditor);
 	void OnNodeTitleCommitted(const FText& NewText, ETextCommit::Type CommitInfo, UEdGraphNode* PropertyThatChanged);
 
+	void OnAddInputPin();
+	bool CanAddInputPin() const;
+	void OnRemoveInputPin();
+	bool CanRemoveInputPin()const;
+
+	void SearchTree();
+	bool CanSearchTree()const;
+
+	void JumpToNode(const UEdGraphNode* Node);
+	bool IsPropertyEditable()const;
+	void OnPackageSaved(const FString& PackageFileName, UObject* Outer);
+	void OnFinishedChangingProperties(const FPropertyChangedEvent& PropertyChangedEvent);
+	
+	void UpdateToolBar();
+	FGraphAppearanceInfo GetGraphAppearance() const;
+	bool IsEditingMode(bool bGraphIsEditable)const;
+
+
 	// Begin of FEditorUndoClient Interface
 	virtual void PostUndo(bool bSuccess) override;
 	virtual void PostRedo(bool bSuccess) override;
@@ -76,6 +95,14 @@ public:
 
 
 	bool InEditingMode(bool bGraphIsEditable)const;
+	// get dialogue tree
+	UDialogueTree* GetDialogueTree() const;
+
+	// spawns the tab with the update graph inside
+	TSharedRef<SWidget> SpawnProperties();
+
+	TSharedRef<SWidget> SpawnSearch();
+
 private:
 	TSharedRef<class SGraphEditor> CreateGraphEditorWidget(UEdGraph* InGraph);
 
@@ -85,7 +112,8 @@ private:
 
 	void BindCommonCommands();
 
-
+public:
+	static const FName DialogueTreeMode;
 protected:
 	// µ±Ç°Í¼±í
 	TWeakPtr<SGraphEditor> UpdateGraphEdPtr;
@@ -105,4 +133,6 @@ private:
 
 
 	uint32 SelectdNodeCount;
+
+	TSharedPtr<class SFindInBT> FindReuslts;
 };
