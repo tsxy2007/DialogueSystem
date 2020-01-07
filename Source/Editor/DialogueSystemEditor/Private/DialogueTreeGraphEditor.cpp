@@ -35,10 +35,10 @@ FDialogueTreeGraphEditor::~FDialogueTreeGraphEditor()
 	}
 }
 
-void FDialogueTreeGraphEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& TabManager)
+void FDialogueTreeGraphEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager)
 {
-	DocumentManager->SetTabManager(TabManager);
-	FWorkflowCentricApplication::RegisterTabSpawners(TabManager);
+	DocumentManager->SetTabManager(InTabManager);
+	FWorkflowCentricApplication::RegisterTabSpawners(InTabManager);
 }
 
 void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type Mode, const TSharedPtr<IToolkitHost>& InitToolkitHost, UObject* InObject)
@@ -48,6 +48,26 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 	{
 		DialogueTree = DialogueTreeToEdit;
 	}
+	TSharedPtr<FDialogueTreeGraphEditor> ThisPtr(SharedThis(this));
+	if (!DocumentManager.IsValid())
+	{
+		DocumentManager = MakeShareable(new FDocumentTracker);
+		DocumentManager->Initialize(ThisPtr);
+		/*{
+			TSharedRef<FDocumentTabFactory> GraphEditorFactory = MakeShareable(new FSkillGraphEditorSummoner(ThisPtr,
+				FSkillGraphEditorSummoner::FOnCreateGraphEditorWidget::CreateSP(this, &FDialogueTreeGraphEditor::CreateGraphEditorWidget)
+			));
+			GraphEditorTabFactoryPtr = GraphEditorFactory;
+			DocumentManager->RegisterDocumentFactory(GraphEditorFactory);
+		}*/
+	}
+
+	TArray<UObject*> ObjectsToEdit;
+	if (DialogueTree)
+	{
+		ObjectsToEdit.Add(DialogueTree);
+	}
+
 }
 
 FName FDialogueTreeGraphEditor::GetToolkitFName() const

@@ -6,6 +6,7 @@
 #include "Modules/ModuleManager.h"
 #include "DialogueTree.h"
 #include "DialogueSystemEditor.h"
+#include "DialogueTreeGraphEditor.h"
 
 #define LOCTEXT_NAMESPACE "AssetTyipeActions"
 UClass* FAssetTypeActions_DialogueTree::GetSupportedClass() const
@@ -23,9 +24,18 @@ void FAssetTypeActions_DialogueTree::OpenAssetEditor(const TArray<UObject *>& In
 		{
 			bool bFoundInAsset = false;
 			bool bOpen = false;
+			{
+				FDialogueTreeGraphEditor* ExistingInstance = static_cast<FDialogueTreeGraphEditor*>(FAssetEditorManager::Get().FindEditorForAsset(Dialogue, bOpen));
+				if (ExistingInstance != nullptr)
+				{
+					ExistingInstance->InitDialogueTreeEditor(Mode, EditWithinLevelEditor, Dialogue);
+					bFoundInAsset = true;
+				}
+			}
 			if (!bFoundInAsset)
 			{
 				FDialogueSystemEditorModule& DialogueSystemEditorModule = FDialogueSystemEditorModule::Get();
+				TSharedRef<FDialogueTreeGraphEditor> ExistingInstance = DialogueSystemEditorModule.CreateDialogueSystemEditor(Mode, EditWithinLevelEditor, Dialogue);
 			}
 		}
 	}

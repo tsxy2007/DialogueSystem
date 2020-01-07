@@ -21,6 +21,8 @@ public:
 	{
 		return FModuleManager::LoadModuleChecked<FDialogueSystemEditorModule>("DialogueSystemEditor");
 	}
+
+	TSharedRef<class FDialogueTreeGraphEditor> CreateDialogueSystemEditor(EToolkitMode::Type Mode, TSharedPtr<class IToolkitHost> InEditWithInLevel, UObject* InDialogue);
 #if WITH_EDITOR
 	virtual EAssetTypeCategories::Type GetDialogueTreeAssetCategoryBit() const { return DialogueTreeAssetCategoryBit; }
 protected:
