@@ -20,6 +20,10 @@
 #include "GraphEditorActions.h"
 #include "DialogueTreeEditorModes.h"
 #include "DialogueTreeEditorToolbar.h"
+#include "DialogueGraph.h"
+#include "BlueprintEditorUtils.h"
+#include "WorkflowUObjectDocuments.h"
+#include "SharedPointer.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTreeGraphEditor"
 
@@ -497,6 +501,40 @@ void FDialogueTreeGraphEditor::RegisterToolbarTab(const TSharedRef<class FTabMan
 	FAssetEditorToolkit::RegisterTabSpawners(InTabManger);
 }
 
+void FDialogueTreeGraphEditor::RestoreDialogueTree()
+{
+	UDialogueGraph* MyGraph = Cast<UDialogueGraph>(DialogueTree->DTGraph);
+	const bool bNewGraph = MyGraph == nullptr;
+	if (MyGraph == nullptr)
+	{
+		DialogueTree->DTGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueTree, TEXT("Dialogue Tree"), UDialogueGraph::StaticClass(), nullptr);
+		MyGraph = Cast<UDialogueGraph>(DialogueTree->DTGraph);
+		const UEdGraphSchema* Schema = MyGraph->GetSchema();
+		MyGraph->OnCreated();
+	}
+	else
+	{
+		MyGraph->OnLoaded();
+	}
+
+	MyGraph->Initialize();
+	TSharedRef<FTabPayload_UObject> Payload = FTabPayload_UObject::Make(MyGraph);
+	TSharedPtr<SDockTab> DocumentTab = DocumentManager->OpenDocument(Payload, bNewGraph ? FDocumentTracker::OpenNewDocument : FDocumentTracker::RestorePreviousDocument);
+	if (DialogueTree->LastEditedDocuments.Num() > 0)
+	{
+		TSharedRef<SGraphEditor> GraphEditor = StaticCastSharedRef<SGraphEditor>(DocumentTab->GetContent());
+		GraphEditor->SetViewLocation(DialogueTree->LastEditedDocuments[0].SavedViewOffset, DialogueTree->LastEditedDocuments[0].SavedZoomAmount);
+	}
+	const bool bIncreaseVersionNum = false;
+	MyGraph->UpdateAsset(UDialogueGraph::KeepRebuildCounter);
+}
+
+void FDialogueTreeGraphEditor::SaveEditedObjectState()
+{
+	DialogueTree->LastEditedDocuments.Empty();
+	DocumentManager->SaveAllState();
+}
+
 TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)
 {
 	check(InGraph != nullptr);
@@ -523,7 +561,7 @@ TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget
 			.FillWidth(1.f)
 			[
 				SNew(STextBlock)
-				.Text(LOCTEXT("BehaviorTreeGraphLabel", "Behavior Tree"))
+				.Text(LOCTEXT("BehaviorTreeGraphLabel", "Dialogue Tree"))
 			.TextStyle(FEditorStyle::Get(), TEXT("GraphBreadcrumbButtonText"))
 			]
 		];
@@ -534,6 +572,7 @@ TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget
 	return SNew(SGraphEditor)
 		.AdditionalCommands(GraphEditorCommands)
 		.IsEditable(this, &FDialogueTreeGraphEditor::InEditingMode, bGraphIsEditor)
+		.Appearance(this, &FDialogueTreeGraphEditor::GetGraphAppearance)
 		.TitleBar(TitleBarWidget)
 		.GraphToEdit(InGraph)
 		.GraphEvents(InEvents);

@@ -114,6 +114,10 @@ public:
 
 	void RegisterToolbarTab(const TSharedRef<class FTabManager>& TabManger);
 
+	void RestoreDialogueTree();
+
+	void SaveEditedObjectState();
+
 private:
 	TSharedRef<class SGraphEditor> CreateGraphEditorWidget(UEdGraph* InGraph);
 

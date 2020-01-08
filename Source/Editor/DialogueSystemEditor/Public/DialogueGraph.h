@@ -14,6 +14,13 @@ class DIALOGUESYSTEMEDITOR_API UDialogueGraph : public UEdGraph
 {
 	GENERATED_UCLASS_BODY()
 public:
+
+	enum EUpdateFlags
+	{
+		RebuildGraph = 0,
+		KeepRebuildCounter = 1,
+	};
+
 	UPROPERTY()
 	int32 GraphVersion;
 

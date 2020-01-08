@@ -15,6 +15,7 @@
 
 FDialogueDetailsSummoner::FDialogueDetailsSummoner(TSharedPtr<class FDialogueTreeGraphEditor> InDialogueTreeEditorPtr)
 	:FWorkflowTabFactory(FDialogueTreeGraphEditorTabs::GraphDetailsID,InDialogueTreeEditorPtr)
+	, DialogueTreeEditorPtr(InDialogueTreeEditorPtr)
 {
 	TabLabel = LOCTEXT("DialogueTreeDetailsLabel", "Details");
 	TabIcon = FSlateIcon(FEditorStyle::GetStyleSetName(), "Kismet.Tabs.Components");

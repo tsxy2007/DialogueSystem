@@ -73,14 +73,13 @@ void FDialogueTreeEditorApplicationMode::PreDeactivateMode()
 	FApplicationMode::PreDeactivateMode();
 	check(DialogueTreeGraphEditor.IsValid());
 	TSharedPtr<FDialogueTreeGraphEditor> DialogueTreeGraphEditorPtr = DialogueTreeGraphEditor.Pin();
-	// TODO:
+	DialogueTreeGraphEditorPtr->SaveEditedObjectState();
 }
 
 void FDialogueTreeEditorApplicationMode::PostActivateMode()
 {
 	check(DialogueTreeGraphEditor.IsValid());
 	TSharedPtr<FDialogueTreeGraphEditor> BehaviorTreeEditorPtr = DialogueTreeGraphEditor.Pin();
-	//BehaviorTreeEditorPtr->RestoreBehaviorTree();
-	//TODO:
+	BehaviorTreeEditorPtr->RestoreDialogueTree();
 	FApplicationMode::PostActivateMode();
 }
