@@ -18,6 +18,8 @@
 #include "ModuleManager.h"
 #include "AssetEditorToolkit.h"
 #include "GraphEditorActions.h"
+#include "DialogueTreeEditorModes.h"
+#include "DialogueTreeEditorToolbar.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTreeGraphEditor"
 
@@ -77,6 +79,12 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 		ObjectsToEdit.Add(DialogueTree);
 	}
 
+	// tool bar build 
+	if (!ToolbarBuilder.IsValid())
+	{
+		ToolbarBuilder = MakeShareable(new FDialogueTreeEditorToolbar(SharedThis(this)));
+	}
+	// end;
 	const TArray<UObject*>* EditedObjects = GetObjectsCurrentlyBeingEdited();
 	if (EditedObjects == nullptr || EditedObjects->Num() == 0)
 	{
@@ -91,11 +99,9 @@ void FDialogueTreeGraphEditor::InitDialogueTreeEditor(const EToolkitMode::Type M
 		ExtendMenu();
 		CreateInternalWidgets();
 
-		//AddApplicationMode(DialogueTreeMode,MakeShareable(new FDialogue))
+		AddApplicationMode(DialogueTreeMode, MakeShareable(new FDialogueTreeEditorApplicationMode(ThisPtr)));
 	}
 
-	// TODO: tool bar build 
-	// TODO: end;
 
 	SetCurrentMode(DialogueTreeMode);
 	OnClassListUpdated();
@@ -441,6 +447,11 @@ bool FDialogueTreeGraphEditor::InEditingMode(bool bGraphIsEditable) const
 	return bGraphIsEditable;
 }
 
+bool FDialogueTreeGraphEditor::CanAccessDialogueTreeMode() const
+{
+	return DialogueTree != nullptr;
+}
+
 FText FDialogueTreeGraphEditor::GetLocalizeMode(FName InMode)
 {
 	static TMap<FName, FText> LocModes;
@@ -479,6 +490,11 @@ TSharedRef<SWidget> FDialogueTreeGraphEditor::SpawnSearch()
 		[
 			SNew(STextBlock)
 		];
+}
+
+void FDialogueTreeGraphEditor::RegisterToolbarTab(const TSharedRef<class FTabManager>& InTabManger)
+{
+	FAssetEditorToolkit::RegisterTabSpawners(InTabManger);
 }
 
 TSharedRef<class SGraphEditor> FDialogueTreeGraphEditor::CreateGraphEditorWidget(UEdGraph* InGraph)

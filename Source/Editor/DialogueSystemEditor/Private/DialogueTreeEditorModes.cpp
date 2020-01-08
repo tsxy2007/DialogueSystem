@@ -6,6 +6,10 @@
 #include "Framework/Docking/TabManager.h"
 #include "WorkflowOrientedApp/WorkflowTabManager.h"
 #include "WorkflowOrientedApp/ApplicationMode.h"
+#include "DialogueTreeEditorTabs.h"
+#include "SharedPointer.h"
+#include "DialogueTreeGraphEditor.h"
+#include "DialogueTreeEditorToolbar.h"
 
 FDialogueTreeEditorApplicationMode::FDialogueTreeEditorApplicationMode(TSharedPtr<class FDialogueTreeGraphEditor> InDialogueTreeGraphEditor)
 	:FApplicationMode(FDialogueTreeGraphEditor::DialogueTreeMode,FDialogueTreeGraphEditor::GetLocalizeMode)
@@ -26,14 +30,14 @@ FDialogueTreeEditorApplicationMode::FDialogueTreeEditorApplicationMode(TSharedPt
 				->AddTab(InDialogueTreeGraphEditor->GetToolbarTabId(), ETabState::OpenedTab)
 				->SetHideTabWell(true)
 			)
-			/*->Split
+			->Split
 			(
 				FTabManager::NewSplitter()->SetOrientation(Orient_Horizontal)
 				->Split
 				(
 					FTabManager::NewStack()
 					->SetSizeCoefficient(0.7f)
-					->AddTab(FBehaviorTreeEditorTabs::GraphEditorID, ETabState::ClosedTab)
+					->AddTab(FDialogueTreeGraphEditorTabs::GraphEditorID, ETabState::ClosedTab)
 				)
 				->Split
 				(
@@ -43,24 +47,40 @@ FDialogueTreeEditorApplicationMode::FDialogueTreeEditorApplicationMode(TSharedPt
 					(
 						FTabManager::NewStack()
 						->SetSizeCoefficient(0.6f)
-						->AddTab(FBehaviorTreeEditorTabs::GraphDetailsID, ETabState::OpenedTab)
-						->AddTab(FBehaviorTreeEditorTabs::SearchID, ETabState::ClosedTab)
+						->AddTab(FDialogueTreeGraphEditorTabs::GraphDetailsID, ETabState::OpenedTab)
+						->AddTab(FDialogueTreeGraphEditorTabs::SearchID, ETabState::ClosedTab)
 					)
 				)
-			)*/
+			)
 		);
 
-	//InDialogueTreeGraphEditor->GetToolbarBuilder()->
+	InDialogueTreeGraphEditor->GetToolbarBuilder()->AddModesToolbar(ToolbarExtender);
+	InDialogueTreeGraphEditor->GetToolbarBuilder()->AddDialogueTreeToolbar(ToolbarExtender);
 }
 
 void FDialogueTreeEditorApplicationMode::RegisterTabFactories(TSharedPtr<FTabManager> InTabManager)
 {
+	check(DialogueTreeGraphEditor.IsValid());
+	TSharedPtr<FDialogueTreeGraphEditor> DialogueTreeGraphEditorPtr = DialogueTreeGraphEditor.Pin();
+	DialogueTreeGraphEditorPtr->RegisterToolbarTab(InTabManager.ToSharedRef());
+
+	DialogueTreeGraphEditorPtr->PushTabFactories(DialogueTreeEditorTabFactories);
+	FApplicationMode::RegisterTabFactories(InTabManager);
 }
 
 void FDialogueTreeEditorApplicationMode::PreDeactivateMode()
 {
+	FApplicationMode::PreDeactivateMode();
+	check(DialogueTreeGraphEditor.IsValid());
+	TSharedPtr<FDialogueTreeGraphEditor> DialogueTreeGraphEditorPtr = DialogueTreeGraphEditor.Pin();
+	// TODO:
 }
 
 void FDialogueTreeEditorApplicationMode::PostActivateMode()
 {
+	check(DialogueTreeGraphEditor.IsValid());
+	TSharedPtr<FDialogueTreeGraphEditor> BehaviorTreeEditorPtr = DialogueTreeGraphEditor.Pin();
+	//BehaviorTreeEditorPtr->RestoreBehaviorTree();
+	//TODO:
+	FApplicationMode::PostActivateMode();
 }

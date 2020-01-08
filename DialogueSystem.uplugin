@@ -22,12 +22,7 @@
     {
       "Name": "DialogueSystemEditor",
       "Type": "Editor",
-      "LoadingPhase": "Default",
-      "WhitelistPlatforms": [
-        "Win64",
-        "Mac",
-        "PS4"
-      ]
+      "LoadingPhase": "Default"
     }
   ]
 }

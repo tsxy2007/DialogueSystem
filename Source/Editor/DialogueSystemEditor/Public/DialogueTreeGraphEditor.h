@@ -14,6 +14,7 @@
 class IToolkitHost;
 class FDocumentTracker;
 class UDialogueTree;
+class FDialogueTreeEditorToolbar;
 /**
  * 
  */
@@ -96,7 +97,12 @@ public:
 
 	bool InEditingMode(bool bGraphIsEditable)const;
 
+
+	bool CanAccessDialogueTreeMode()const;
+
 	static FText GetLocalizeMode(FName InMode);
+
+	TSharedPtr<FDialogueTreeEditorToolbar> GetToolbarBuilder() { return ToolbarBuilder; }
 
 	// get dialogue tree
 	UDialogueTree* GetDialogueTree() const;
@@ -105,6 +111,8 @@ public:
 	TSharedRef<SWidget> SpawnProperties();
 
 	TSharedRef<SWidget> SpawnSearch();
+
+	void RegisterToolbarTab(const TSharedRef<class FTabManager>& TabManger);
 
 private:
 	TSharedRef<class SGraphEditor> CreateGraphEditorWidget(UEdGraph* InGraph);
@@ -138,4 +146,6 @@ private:
 	uint32 SelectdNodeCount;
 
 	TSharedPtr<class SFindInBT> FindReuslts;
+
+	TSharedPtr<FDialogueTreeEditorToolbar> ToolbarBuilder;
 };
