@@ -31,4 +31,6 @@ protected:
 
 public:
 	static const FName DialogueTreeEditorAppIdentifier;
+
+	TSharedPtr<FAssetTypeActions_DialogueTree> DialogueTreeAssetTypeAction;
 };
