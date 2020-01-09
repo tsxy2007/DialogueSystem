@@ -24,6 +24,7 @@
 #include "BlueprintEditorUtils.h"
 #include "WorkflowUObjectDocuments.h"
 #include "SharedPointer.h"
+#include "EdGraphSchema_DialogueTree.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTreeGraphEditor"
 
@@ -507,7 +508,7 @@ void FDialogueTreeGraphEditor::RestoreDialogueTree()
 	const bool bNewGraph = MyGraph == nullptr;
 	if (MyGraph == nullptr)
 	{
-		DialogueTree->DTGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueTree, TEXT("Dialogue Tree"), UDialogueGraph::StaticClass(), nullptr);
+		DialogueTree->DTGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueTree, TEXT("Dialogue Tree"), UDialogueGraph::StaticClass(), UEdGraphSchema_DialogueTree::StaticClass());
 		MyGraph = Cast<UDialogueGraph>(DialogueTree->DTGraph);
 		const UEdGraphSchema* Schema = MyGraph->GetSchema();
 		MyGraph->OnCreated();
