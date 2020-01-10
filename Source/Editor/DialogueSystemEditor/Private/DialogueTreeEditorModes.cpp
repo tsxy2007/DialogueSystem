@@ -46,7 +46,7 @@ FDialogueTreeEditorApplicationMode::FDialogueTreeEditorApplicationMode(TSharedPt
 					->Split
 					(
 						FTabManager::NewStack()
-						->SetSizeCoefficient(0.6f)
+						//->SetSizeCoefficient(0.6f)
 						->AddTab(FDialogueTreeGraphEditorTabs::GraphDetailsID, ETabState::OpenedTab)
 						->AddTab(FDialogueTreeGraphEditorTabs::SearchID, ETabState::ClosedTab)
 					)

@@ -20,6 +20,11 @@ void FDTSchemaAction_NewNode::AddReferencedObjects(FReferenceCollector & Collect
 UEdGraphSchema_DialogueTree::UEdGraphSchema_DialogueTree(const FObjectInitializer& Obj) :Super(Obj)
 {}
 
+void UEdGraphSchema_DialogueTree::CreateDefaultNodesForGraph(UEdGraph& Graph) const
+{
+
+}
+
 void UEdGraphSchema_DialogueTree::GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, class FMenuBuilder* MenuBuilder, bool bIsDebugging) const
 {
 

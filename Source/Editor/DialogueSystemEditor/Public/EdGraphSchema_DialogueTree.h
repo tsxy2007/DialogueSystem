@@ -53,6 +53,7 @@ class DIALOGUESYSTEMEDITOR_API UEdGraphSchema_DialogueTree : public UEdGraphSche
 	
 public:
 	//~ Begin EdGraphSchema Interface
+	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
 	virtual void GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, class FMenuBuilder* MenuBuilder, bool bIsDebugging) const override;
 	virtual FLinearColor GetPinTypeColor(const FEdGraphPinType& PinType) const override;
 	virtual bool ShouldHidePinDefaultValue(UEdGraphPin* Pin) const override;

@@ -215,7 +215,8 @@ void FDialogueTreeGraphEditor::JumpToNode(const UEdGraphNode * Node)
 
 bool FDialogueTreeGraphEditor::IsPropertyEditable() const
 {
-	return false;
+	TSharedPtr<SGraphEditor> FocusedGraphEd = UpdateGraphEdPtr.Pin();
+	return FocusedGraphEd.IsValid() && FocusedGraphEd->GetCurrentGraph() && FocusedGraphEd->GetCurrentGraph()->bEditable;
 }
 
 void FDialogueTreeGraphEditor::OnPackageSaved(const FString & PackageFileName, UObject * Outer)
@@ -478,11 +479,17 @@ UDialogueTree* FDialogueTreeGraphEditor::GetDialogueTree() const
 TSharedRef<SWidget> FDialogueTreeGraphEditor::SpawnProperties()
 {
 	return SNew(SVerticalBox)
-		+SVerticalBox::Slot()
+		+ SVerticalBox::Slot()
 		.FillHeight(1.0f)
 		.HAlign(HAlign_Fill)
 		[
 			DetailsView.ToSharedRef()
+		]
+		+ SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SNew(STextBlock)
+			.Text(LOCTEXT("DialogueText","nicai"))
 		];
 }
 
