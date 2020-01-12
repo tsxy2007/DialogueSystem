@@ -38,6 +38,8 @@ FDialogueTreeGraphEditor::FDialogueTreeGraphEditor()
 		Editor->RegisterForUndo(this);
 	}
 	//OnClassListUpdatedDelegateHandle = FGraphNodeClassHelper::OnPackageListUpdated.
+	OnPackageSavedDelegateHandle = UPackage::PackageSavedEvent.AddRaw(this,&FDialogueTreeGraphEditor::OnPackageSaved);
+
 
 	DialogueTree = nullptr;
 }
@@ -49,6 +51,7 @@ FDialogueTreeGraphEditor::~FDialogueTreeGraphEditor()
 	{
 		Editor->UnregisterForUndo(this);
 	}
+	UPackage::PackageSavedEvent.Remove(OnPackageSavedDelegateHandle);
 }
 
 void FDialogueTreeGraphEditor::RegisterTabSpawners(const TSharedRef<FTabManager>& InTabManager)
@@ -221,6 +224,12 @@ bool FDialogueTreeGraphEditor::IsPropertyEditable() const
 
 void FDialogueTreeGraphEditor::OnPackageSaved(const FString & PackageFileName, UObject * Outer)
 {
+	UDialogueGraph* MyGraph = DialogueTree ? Cast<UDialogueGraph>(DialogueTree->DTGraph) : NULL;
+	if (MyGraph)
+	{
+		//const bool bUpdated = MyGraph->updateinj
+		MyGraph->UpdateAsset();
+	}
 }
 
 void FDialogueTreeGraphEditor::OnFinishedChangingProperties(const FPropertyChangedEvent & PropertyChangedEvent)
@@ -489,7 +498,7 @@ TSharedRef<SWidget> FDialogueTreeGraphEditor::SpawnProperties()
 		.AutoHeight()
 		[
 			SNew(STextBlock)
-			.Text(LOCTEXT("DialogueText","nicai"))
+			.Text(FText::FromString(TEXT("Properties")))
 		];
 }
 
@@ -518,6 +527,7 @@ void FDialogueTreeGraphEditor::RestoreDialogueTree()
 		DialogueTree->DTGraph = FBlueprintEditorUtils::CreateNewGraph(DialogueTree, TEXT("Dialogue Tree"), UDialogueGraph::StaticClass(), UEdGraphSchema_DialogueTree::StaticClass());
 		MyGraph = Cast<UDialogueGraph>(DialogueTree->DTGraph);
 		const UEdGraphSchema* Schema = MyGraph->GetSchema();
+		Schema->CreateDefaultNodesForGraph(*MyGraph);
 		MyGraph->OnCreated();
 	}
 	else

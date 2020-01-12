@@ -152,4 +152,6 @@ private:
 	TSharedPtr<class SFindInBT> FindReuslts;
 
 	TSharedPtr<FDialogueTreeEditorToolbar> ToolbarBuilder;
+
+	FDelegateHandle OnPackageSavedDelegateHandle;
 };

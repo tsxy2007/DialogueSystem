@@ -2,6 +2,7 @@
 
 
 #include "EdGraphSchema_DialogueTree.h"
+#include "DialogueGraphNode.h"
 
 UEdGraphNode * FDTSchemaAction_NewNode::PerformAction(UEdGraph * ParentGraph, TArray<UEdGraphPin*>& FromPins, const FVector2D Location, bool bSelectNewNode)
 {
@@ -22,7 +23,10 @@ UEdGraphSchema_DialogueTree::UEdGraphSchema_DialogueTree(const FObjectInitialize
 
 void UEdGraphSchema_DialogueTree::CreateDefaultNodesForGraph(UEdGraph& Graph) const
 {
-
+	FGraphNodeCreator<UDialogueGraphNode> NodeCreator(Graph);
+	UDialogueGraphNode* MyNode = NodeCreator.CreateNode();
+	NodeCreator.Finalize();
+	SetNodeMetaData(MyNode, FNodeMetadata::DefaultGraphNode);
 }
 
 void UEdGraphSchema_DialogueTree::GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, class FMenuBuilder* MenuBuilder, bool bIsDebugging) const
