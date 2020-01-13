@@ -4,12 +4,28 @@
 #include "DialogueGraphNode.h"
 #include "ScopedTransaction.h"
 #include "EdGraph/EdGraph.h"
+#include "DialogueGraph.h"
 
 #define LOCTEXT_NAMESPACE "Dialogue"
 
 UDialogueGraphNode::UDialogueGraphNode(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
 {}
+
+void UDialogueGraphNode::PostPlacedNewNode()
+{
+	Super::PostPlacedNewNode();
+	UDialogueGraph* MyGraph = GetDialogueGraph();
+	UObject* GraphOwner = MyGraph ? MyGraph->GetOuter() : nullptr;
+	if (GraphOwner)
+	{
+		
+		//MyGraph->SpawnNodeInsideGraph();
+		//Instance = NewObject<UObject>(GraphOwner, );
+		//Instance->SetFlags(RF_Transactional);
+		InitializeInstance();
+	}
+}
 
 UDialogueGraph * UDialogueGraphNode::GetDialogueGraph()
 {
@@ -158,4 +174,10 @@ UEdGraphPin* UDialogueGraphNode::GetOutputPin(int32 InputIndex /*= 0*/) const
 	}
 	return nullptr;
 }
+
+void UDialogueGraphNode::InitializeInstance()
+{
+
+}
+
 #undef LOCTEXT_NAMESPACE

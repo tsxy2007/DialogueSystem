@@ -19,6 +19,7 @@ public class DialogueSystem : ModuleRules
 			new string[] {
 				// ... add other private include paths required here ...
                 "Runtime/DialogueSystem/Public",
+                "Runtime/DialogueSystem/Public/Nodes",
             }
 			);
 			
