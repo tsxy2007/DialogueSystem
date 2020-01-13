@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "DialogueNode.generated.h"
+class UDialogueTree;
 //
 // 对话类型
 UENUM(BlueprintType)
@@ -21,10 +22,10 @@ enum class EDialogueSpeakType : uint8
 UCLASS()
 class DIALOGUESYSTEM_API UDialogueNode : public UObject
 {
-	GENERATED_BODY()
-	
+	GENERATED_UCLASS_BODY()
 public:
-	UDialogueNode();
+	virtual void InitializeFromAsset(UDialogueTree& Asset);
+	
 public:
 	UPROPERTY()
 	FText Speaker;
@@ -40,4 +41,7 @@ public:
 
 	UPROPERTY()
 	class UTexture2D* BG;
+
+	UPROPERTY()
+	class UDialogueTree* DialogueTree;
 };

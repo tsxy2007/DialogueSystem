@@ -47,7 +47,19 @@ class DIALOGUESYSTEM_API UDialogueTree : public UObject
 
 	UPROPERTY()
 	TArray<FEditedDocumentInfo> LastEditedDocuments;
+
+	void AddNode(UDialogueNode* InNode);
+	void RemoveNode(UDialogueNode* NodeToRemove);
 #endif // WITH_EDITORONLY_DATA
+
+
+	template <class T>
+	T* SpawnNodeInsideGraph(TSubclassOf<UDialogueNode> InNodeClass)
+	{
+		T* SpawenNode = NewObject<T>(this, InNodeClass, NAME_None, RF_Transactional);
+		AddNode(SpawenNode);
+		return SpawenNode;
+	}
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Dialogue)
 	TArray<UDialogueNode*> Data;

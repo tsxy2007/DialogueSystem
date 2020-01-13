@@ -7,3 +7,19 @@ UDialogueTree::UDialogueTree(const FObjectInitializer& ObjectInitializer) : Supe
 {
 
 }
+
+#if WITH_EDITOR
+
+void UDialogueTree::AddNode(UDialogueNode* InNode)
+{
+	
+	InNode->Rename(nullptr, this);
+	int32 Index = Data.Add(InNode);
+}
+
+void UDialogueTree::RemoveNode(UDialogueNode* NodeToRemove)
+{
+
+}
+
+#endif
