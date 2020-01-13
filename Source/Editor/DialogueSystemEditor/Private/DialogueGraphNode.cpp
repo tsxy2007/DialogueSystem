@@ -5,6 +5,7 @@
 #include "ScopedTransaction.h"
 #include "EdGraph/EdGraph.h"
 #include "DialogueGraph.h"
+#include "DialogueNode.h"
 
 #define LOCTEXT_NAMESPACE "Dialogue"
 
@@ -19,10 +20,8 @@ void UDialogueGraphNode::PostPlacedNewNode()
 	UObject* GraphOwner = MyGraph ? MyGraph->GetOuter() : nullptr;
 	if (GraphOwner)
 	{
-		
-		//MyGraph->SpawnNodeInsideGraph();
-		//Instance = NewObject<UObject>(GraphOwner, );
-		//Instance->SetFlags(RF_Transactional);
+		Instance = NewObject<UObject>(GraphOwner,UDialogueNode::StaticClass());// MyGraph->SpawnNodeInsideGraph<UObject>(UDialogueNode::StaticClass());
+		Instance->SetFlags(RF_Transactional);
 		InitializeInstance();
 	}
 }
