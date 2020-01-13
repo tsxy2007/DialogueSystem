@@ -4,67 +4,71 @@
 
 #include "CoreMinimal.h"
 #include "UObject/ObjectMacros.h"
-#include "EdGraph/EdGraphSchema.h"
+#include "DTGraphSchema.h"
 #include "EdGraphSchema_DialogueTree.generated.h"
 
 class FSlateRect;
 class UEdGraph;
 
 USTRUCT()
-struct  DIALOGUESYSTEMEDITOR_API FDTSchemaAction_NewNode : public FEdGraphSchemaAction
+struct FDialogueTreeSchemaAction_AutoArrange : public FEdGraphSchemaAction
 {
 	GENERATED_USTRUCT_BODY();
 public:
-	class UDTGraphNode*  NodeTemplate;
-	FDTSchemaAction_NewNode()
+	FDialogueTreeSchemaAction_AutoArrange()
 		:FEdGraphSchemaAction()
-		, NodeTemplate(nullptr)
 	{
 
 	}
-
-	FDTSchemaAction_NewNode(FText InNodeCategory,FText InMenuDesc,FText InToolTip,const int32 InGrouping)
+	FDialogueTreeSchemaAction_AutoArrange(FText InNodeCategory,FText InMenuDesc,FText InToolTip,const int32 InGrouping)
 		:FEdGraphSchemaAction(MoveTemp(InNodeCategory),MoveTemp(InMenuDesc),MoveTemp(InToolTip),InGrouping)
-		,NodeTemplate(nullptr)
 	{}
+	
+	// ~ Begin FEdgraphSchemaAction Interface
+	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override;
+	// ~ End FEdGraphSchemaAction Interface
+};
 
-	//~Begin FEdgraphSchemaAction Interface
-	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, TArray<UEdGraphPin *>& FromPins, const FVector2D Location, bool bSelectNewNode  = true ) override;
-	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin * FromPins, const FVector2D Location, bool bSelectNewNode = true) override;
-	virtual void AddReferencedObjects(FReferenceCollector& Collector) override;
-	//~End FEdgraphSchemaAction Interface
 
-	template<typename NodeType>
-	static NodeType* SpawnNodeFromTemplate(class UEdGraph* ParentGraph, NodeType* InTemplateNode, const FVector2D Location)
-	{
-		FDTSchemaAction_NewNode Action;
-		Action->NodeTemplate = InTemplateNode;
-		return Cast<NodeType>(Action->PerformAction(ParentGraph, nullptr, Location));
-	}
+USTRUCT()
+struct FDialogueTreeSchemaAction_AddComment : public FEdGraphSchemaAction
+{
+	GENERATED_BODY()
+public:
+	FDialogueTreeSchemaAction_AddComment():FEdGraphSchemaAction(){}
+	FDialogueTreeSchemaAction_AddComment(FText InDescription,FText InToolTip)
+		: FEdGraphSchemaAction(FText(),MoveTemp(InDescription),MoveTemp(InToolTip),0)
+	{}
+	// ~ Begin FEdgraphSchemaAction Interface
+	virtual UEdGraphNode* PerformAction(class UEdGraph* ParentGraph, UEdGraphPin* FromPin, const FVector2D Location, bool bSelectNewNode = true) override;
+	// ~ End FEdGraphSchemaAction Interface
 };
 
 /**
  * 
  */
 UCLASS()
-class DIALOGUESYSTEMEDITOR_API UEdGraphSchema_DialogueTree : public UEdGraphSchema
+class DIALOGUESYSTEMEDITOR_API UEdGraphSchema_DialogueTree : public UDTGraphSchema
 {
 	GENERATED_UCLASS_BODY()
-	
 public:
-	//~ Begin EdGraphSchema Interface
+	//~ Begin EdgraphSchema Interface
 	virtual void CreateDefaultNodesForGraph(UEdGraph& Graph) const override;
+	virtual void GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const override;
 	virtual void GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, class FMenuBuilder* MenuBuilder, bool bIsDebugging) const override;
+	virtual const FPinConnectionResponse CanCreateConnection(const UEdGraphPin* A, const UEdGraphPin* B) const override;
+	virtual const FPinConnectionResponse CanMergeNodes(const UEdGraphNode* A, const UEdGraphNode* B) const override;
 	virtual FLinearColor GetPinTypeColor(const FEdGraphPinType& PinType) const override;
-	virtual bool ShouldHidePinDefaultValue(UEdGraphPin* Pin) const override;
 	virtual class FConnectionDrawingPolicy* CreateConnectionDrawingPolicy(int32 InBackLayerID, int32 InFrontLayerID, float InZoomFactor, const FSlateRect& InClippingRect, class FSlateWindowElementList& InDrawElements, class UEdGraph* InGraphObj) const override;
-	virtual void BreakNodeLinks(UEdGraphNode& TargetNode) const override;
-	virtual void BreakPinLinks(UEdGraphPin& TargetPin, bool bSendsNodeNotifcation) const override;
-	virtual void BreakSinglePinLink(UEdGraphPin* SourcePin, UEdGraphPin* TargetPin) const override;
+	virtual int32 GetNodeSelectionCount(const UEdGraph* Graph) const override;
+	virtual bool IsCacheVisualizationOutOfDate(int32 InVisualizationCacheID) const override;
+	virtual int32 GetCurrentVisualizationCacheID()const override;
+	virtual void ForceVisualizationCacheClear()const override;
+	virtual TSharedPtr<FEdGraphSchemaAction> GetCreateCommentAction() const override;
 	//~ End EdGraphSchema Interface
-	virtual void GetGraphNodeContextActions(FGraphContextMenuBuilder& ContextMenuBuilder, int32 SubNodeFlags) const;
-	//virtual void GetSubNodeClasses(int32 SubNodeFlags, TArray<FGraphNodeClassData>& ClassData, UClass*& GraphNodeClass) const;
 
-protected:
-	static TSharedPtr<FDTSchemaAction_NewNode> AddNewNodeAction(FGraphActionListBuilderBase& ContextMenuBuilder, const FText& MenuDesc, const FText& Tooltip);
+	virtual void GetGraphNodeContextActions(FGraphContextMenuBuilder& ContextMenuBuilder, int32 SubNodeFlags) const override;
+	virtual void GetSubNodeClasses(int32 SubNodeFlags, TArray<FDialogueGraphNodeClassData>& ClassData, UClass*& GraphNodeClass) const override;
+private:
+	static int32 CurrentCacheRefreshID;
 };

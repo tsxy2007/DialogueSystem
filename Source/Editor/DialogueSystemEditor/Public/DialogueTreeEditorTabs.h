@@ -4,14 +4,12 @@
 
 #include "CoreMinimal.h"
 
-/**
- * @auth ∑…ŒË«·—Ô
- */
-struct FDialogueTreeGraphEditorTabs
+struct FDialogueTreeEditorTabs
 {
+	// Tab identifiers
 	static const FName GraphDetailsID;
 	static const FName SearchID;
 
-	//document
+	// Document tab identifiers
 	static const FName GraphEditorID;
 };

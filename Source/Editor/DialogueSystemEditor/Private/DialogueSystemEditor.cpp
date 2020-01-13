@@ -1,69 +1,125 @@
-// Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
+// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 
 #include "DialogueSystemEditor.h"
-#include "AssetTypeActions_DialogueTree.h"
-#include "DialogueTreeGraphEditor.h"
-#include "DialogueTreeDetails.h"
+#include "AssetTypeActions_Dialogue.h"
+#include "DialogueEditor.h"
+#include "PropertyEditorModule.h"
+#include "DTNode.h"
+#include "DTGraphNode.h"
+#include "PropertyEditorDelegates.h"
+#include "EdGraphUtilities.h"
+#include "SGraphNode_DialogueTree.h"
+#include "SGraphNodeDT.h"
 
-#define LOCTEXT_NAMESPACE "FDialogueSystemEditorModule"
+IMPLEMENT_GAME_MODULE(FDialogueSystemEditorModule, DialogueSystemEditor);
+DEFINE_LOG_CATEGORY(LogDialogueEditor);
+#define LOCTEXT_NAMESPACE "DialogueSystemEditorModule"
+
 
 const FName FDialogueSystemEditorModule::DialogueTreeEditorAppIdentifier(TEXT("DialogueTreeEditorApp"));
 
+class FGraphPanelNodeFactory_DialogueTree : public FGraphPanelNodeFactory
+{
+public:
+	virtual TSharedPtr<class SGraphNode> CreateNode(UEdGraphNode* Node) const override
+	{
+		if (UDTGraphNode* DTNode = Cast<UDTGraphNode>(Node))
+		{
+			return SNew(SGraphNode_DialogueTree, DTNode);
+		}
+		return NULL;
+	}
+};
+
+TSharedPtr<FGraphPanelNodeFactory> GraphPanelNodeFactory_Dialogue;
+
 void FDialogueSystemEditorModule::StartupModule()
 {
-	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
-	IAssetTools& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
-	DialogueTreeAssetTypeAction = MakeShareable(new FAssetTypeActions_DialogueTree);
+	MenuExtensibilityManager = MakeShareable(new FExtensibilityManager);
+	ToolBarExtensibilityManager = MakeShareable(new FExtensibilityManager);
 
-	AssetToolsModule.RegisterAssetTypeActions(DialogueTreeAssetTypeAction.ToSharedRef());
+	GraphPanelNodeFactory_Dialogue = MakeShareable(new FGraphPanelNodeFactory_DialogueTree);
+	FEdGraphUtilities::RegisterVisualNodeFactory(GraphPanelNodeFactory_Dialogue);
+
+	IAssetTools& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>("AssetTools").Get();
+	TSharedPtr<FAssetTypeActions_Dialogue> BehaviorTreeAssetTypeAction = MakeShareable(new FAssetTypeActions_Dialogue);
+	ItemDataAssetTypeActions.Add(BehaviorTreeAssetTypeAction);
+	AssetToolsModule.RegisterAssetTypeActions(BehaviorTreeAssetTypeAction.ToSharedRef());
+
 	if (GIsEditor)
 	{
-		DialogueTreeAssetCategoryBit = AssetToolsModule.RegisterAdvancedAssetCategory(FName(TEXT("Dialogue")), LOCTEXT("DialogueAssetCategory", "Custom Dialogue"));
+		// register AI category so that AI assets can register to it
+		DialogueAssetCategoryBit = AssetToolsModule.RegisterAdvancedAssetCategory(FName(TEXT("Dialogue")), LOCTEXT("DialogueAssetCategory", "Custom Dialogue"));
 	}
 
-	// property
-
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-	PropertyModule.RegisterCustomClassLayout("DialogueTree", FOnGetDetailCustomizationInstance::CreateStatic(&FDialogueTreeDetails::MakeInstance));
+	//PropertyModule.RegisterCustomPropertyTypeLayout("BlackboardKeySelector", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBlackboardSelectorDetails::MakeInstance));
+	//PropertyModule.RegisterCustomClassLayout("BTDecorator_Blackboard", FOnGetDetailCustomizationInstance::CreateStatic(&FBlackboardDecoratorDetails::MakeInstance));
+	//PropertyModule.RegisterCustomClassLayout("BTDecorator", FOnGetDetailCustomizationInstance::CreateStatic(&FBehaviorDecoratorDetails::MakeInstance));
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
 
 void FDialogueSystemEditorModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
 	if (!UObjectInitialized())
 	{
 		return;
 	}
-	
-	//
-	if (FModuleManager::Get().IsModuleLoaded("AssetTools"))
+
+	MenuExtensibilityManager.Reset();
+	ToolBarExtensibilityManager.Reset();
+	ClassCache.Reset();
+
+	if (GraphPanelNodeFactory_Dialogue.IsValid())
+	{
+		FEdGraphUtilities::UnregisterVisualNodeFactory(GraphPanelNodeFactory_Dialogue);
+		GraphPanelNodeFactory_Dialogue.Reset();
+	}
+
+	if (FModuleManager::Get().IsModuleLoaded(TEXT("AssetTools")))
 	{
 		IAssetTools& AssetToolsModule = FModuleManager::GetModuleChecked<FAssetToolsModule>("AssetTools").Get();
-		if (DialogueTreeAssetTypeAction.IsValid())
+		for (auto& AssetTypeAction : ItemDataAssetTypeActions)
 		{
-			AssetToolsModule.UnregisterAssetTypeActions(DialogueTreeAssetTypeAction.ToSharedRef());
+			if (AssetTypeAction.IsValid())
+			{
+				AssetToolsModule.UnregisterAssetTypeActions(AssetTypeAction.ToSharedRef());
+			}
 		}
 	}
+	ItemDataAssetTypeActions.Empty();
+
 	if (FModuleManager::Get().IsModuleLoaded("PropertyEditor"))
 	{
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
-		PropertyModule.UnregisterCustomClassLayout("DialogueTree");
+		//PropertyModule.UnregisterCustomPropertyTypeLayout("BlackboardKeySelector");
+		//PropertyModule.UnregisterCustomClassLayout("BTDecorator_Blackboard");
+		//PropertyModule.UnregisterCustomClassLayout("BTDecorator");
 		PropertyModule.NotifyCustomizationModuleChanged();
 	}
 }
 
-TSharedRef<class FDialogueTreeGraphEditor> FDialogueSystemEditorModule::CreateDialogueSystemEditor(EToolkitMode::Type Mode, TSharedPtr<class IToolkitHost> InEditWithInLevel, UObject* InDialogue)
+TSharedRef<FDialogueEditor> FDialogueSystemEditorModule::CreateDialogueSystemEditor(EToolkitMode::Type Mode, TSharedPtr<class IToolkitHost> InEditWithinLevelEditor, UObject* InDialogue)
 {
-	TSharedPtr<FDialogueTreeGraphEditor> NewDialogueTreeEditor = MakeShareable(new FDialogueTreeGraphEditor);
+	if (!ClassCache.IsValid())
+	{
+		ClassCache = MakeShareable(new FDialogueGraphNodeClassHelper(UDTNode::StaticClass()));
+		//FGraphNodeClassHelper::AddObservedBlueprintClasses(UBTTask_BlueprintBase::StaticClass());
+		//FGraphNodeClassHelper::AddObservedBlueprintClasses(UBTDecorator_BlueprintBase::StaticClass());
+		//FGraphNodeClassHelper::AddObservedBlueprintClasses(UBTService_BlueprintBase::StaticClass());
+		ClassCache->UpdateAvailableBlueprintClasses();
+	}
+
+	TSharedPtr< FDialogueEditor >NewDialogueTreeEditor = MakeShareable(new FDialogueEditor);
+	/*if (!NewDialogueTreeEditor.IsValid())
+	{
+		NewDialogueTreeEditor = MakeShareable(new FDialogueEditor);
+	}*/
 	if (NewDialogueTreeEditor.IsValid())
 	{
-		NewDialogueTreeEditor->InitDialogueTreeEditor(Mode, InEditWithInLevel, InDialogue);
+		NewDialogueTreeEditor->InitDialogueEditor(Mode, InEditWithinLevelEditor, InDialogue);
 	}
 	return NewDialogueTreeEditor.ToSharedRef();
 }
 
 #undef LOCTEXT_NAMESPACE
-	
-IMPLEMENT_MODULE(FDialogueSystemEditorModule, DialogueSystemEditor)

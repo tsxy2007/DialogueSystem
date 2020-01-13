@@ -10,61 +10,54 @@ public class DialogueSystemEditor : ModuleRules
         PrivateIncludePaths.AddRange(
             new string[] {
                 "Editor/DialogueSystemEditor/Private",
-            }
-        );
+			}
+		);
 
-        PublicIncludePaths.AddRange(
+        PrivateIncludePathModuleNames.AddRange(
+            new string[] {
+				"AssetRegistry",
+				"AssetTools",
+                "PropertyEditor",
+				"ContentBrowser"
+			}
+		);
+
+		PrivateDependencyModuleNames.AddRange(
 			new string[] {
-				// ... add public include paths required here ...
-                 "Editor/DialogueSystemEditor/Public",
-            }
-			);
-		
-		PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-                "Core",
-                "CoreUObject",
-                "ApplicationCore",
-                "Engine",
+				"Core", 
+				"CoreUObject", 
+				"ApplicationCore",
+				"Engine", 
                 "RenderCore",
                 "InputCore",
-                "Slate",
-                "SlateCore",
+				"Slate",
+				"SlateCore",
                 "EditorStyle",
-                "UnrealEd",
+				"UnrealEd", 
                 "AudioEditor",
-                "MessageLog",
-                "GraphEditor",
+				"MessageLog", 
+				"GraphEditor",
                 "Kismet",
-                "KismetWidgets",
+				"KismetWidgets",
                 "PropertyEditor",
-                "BlueprintGraph",
-                "ClassViewer",
+				"AnimGraph",
+				"BlueprintGraph",
+                "AIGraph",
+                "AIModule",
                 "DialogueSystem",
-				// ... add other public dependencies that you statically link with here ...
+				"ClassViewer"
 			}
-			);
-			
-		
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-                                "AssetRegistry",
-                "AssetTools",
-                "PropertyEditor",
-                "ContentBrowser"
-                
-				// ... add private dependencies that you statically link with here ...	
-			}
-			);
-		
-		
+		);
+
+		PublicIncludePathModuleNames.Add("LevelEditor");
+
 		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-				// ... add any modules that your module loads dynamically here ...
-			}
-			);
+            new string[] { 
+                "WorkspaceMenuStructure",
+				"AssetTools",
+				"AssetRegistry",
+				"ContentBrowser"
+            }
+		);
 	}
 }

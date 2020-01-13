@@ -1,55 +1,77 @@
 // Copyright 1998-2019 Epic Games, Inc. All Rights Reserved.
 
-using UnrealBuildTool;
-
-public class DialogueSystem : ModuleRules
+namespace UnrealBuildTool.Rules
 {
-	public DialogueSystem(ReadOnlyTargetRules Target) : base(Target)
-	{
-        PrivatePCHHeaderFile = "Runtime/DialogueSystem/Public/DialogueSystem.h";
+    public class DialogueSystem : ModuleRules
+    {
+        public DialogueSystem(ReadOnlyTargetRules Target) : base(Target)
+        {
+            PrivatePCHHeaderFile = "Runtime/DialogueSystem/Public/DialogueSystem.h";
+            PublicIncludePaths.AddRange(
+                new string[] {
+                    "Runtime/DialogueSystem/Public",
+                      "Runtime/DialogueSystem/Public/Manage",
+                }
+                );
 
-        PublicIncludePaths.AddRange(
-			new string[] {
-				// ... add public include paths required here ...
-			}
-			);
-				
-		
-		PrivateIncludePaths.AddRange(
-			new string[] {
-				// ... add other private include paths required here ...
-                "Runtime/DialogueSystem/Public",
-                "Runtime/DialogueSystem/Public/Nodes",
+            PrivateIncludePaths.AddRange(
+                new string[] {
+                    "Runtime/DialogueSystem/Private",
+                }
+                );
+
+            PublicDependencyModuleNames.AddRange(
+                new string[] {
+                    "Core",
+                    "CoreUObject",
+                    "Engine",
+                    "GameplayTags",
+                    "GameplayTasks",
+                    "NavigationSystem",
+                }
+                );
+
+            PrivateDependencyModuleNames.AddRange(
+                new string[] {
+                    "RHI",
+                    "RenderCore",
+                }
+                );
+
+            DynamicallyLoadedModuleNames.AddRange(
+                new string[] {
+					// ... add any modules that your module loads dynamically here ...
+				}
+                );
+
+            if (Target.bBuildEditor == true)
+            {
+                PrivateDependencyModuleNames.Add("UnrealEd");
+                
             }
-			);
-			
-		
-		PublicDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"Core",
-				// ... add other public dependencies that you statically link with here ...
-			}
-			);
-			
-		
-		PrivateDependencyModuleNames.AddRange(
-			new string[]
-			{
-				"CoreUObject",
-				"Engine",
-				"Slate",
-				"SlateCore",
-				// ... add private dependencies that you statically link with here ...	
-			}
-			);
-		
-		
-		DynamicallyLoadedModuleNames.AddRange(
-			new string[]
-			{
-				// ... add any modules that your module loads dynamically here ...
-			}
-			);
-	}
+
+            if (Target.bCompileRecast)
+            {
+                PrivateDependencyModuleNames.Add("Navmesh");
+                PublicDefinitions.Add("WITH_RECAST=1");
+            }
+            else
+            {
+                // Because we test WITH_RECAST in public Engine header files, we need to make sure that modules
+                // that import us also have this definition set appropriately.  Recast is a private dependency
+                // module, so it's definitions won't propagate to modules that import Engine.
+                PublicDefinitions.Add("WITH_RECAST=0");
+            }
+
+            if (Target.bBuildDeveloperTools || (Target.Configuration != UnrealTargetConfiguration.Shipping && Target.Configuration != UnrealTargetConfiguration.Test))
+            {
+                PrivateDependencyModuleNames.Add("GameplayDebugger");
+                PublicDefinitions.Add("WITH_GAMEPLAY_DEBUGGER=1");
+            }
+            else
+            {
+                PublicDefinitions.Add("WITH_GAMEPLAY_DEBUGGER=0");
+            }
+        }
+    }
 }

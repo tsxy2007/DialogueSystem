@@ -3,23 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
-class FDialogueTreeGraphEditor;
+#include "Templates/SharedPointer.h"
+class FDialogueEditor;
 class FExtender;
 class FToolBarBuilder;
+
 /**
- * @author ∑…ŒË«·—Ô
+ * 
  */
-class DIALOGUESYSTEMEDITOR_API FDialogueTreeEditorToolbar : public TSharedFromThis<FDialogueTreeEditorToolbar>
+class FDialogueTreeEditorToolbar : public TSharedFromThis<FDialogueTreeEditorToolbar>
 {
 public:
-	FDialogueTreeEditorToolbar(TSharedPtr<FDialogueTreeGraphEditor> InDialogueTreeGraphEditor) :DialogueTreeEditor(InDialogueTreeGraphEditor) {};
-
+	FDialogueTreeEditorToolbar(TSharedPtr<FDialogueEditor> InDialogueTreeEditor);
+	
 	void AddModesToolbar(TSharedPtr<FExtender> Extender);
-	void AddDialogueTreeToolbar(TSharedPtr<FExtender> Extender);
-private:
+	void AddDebuggerToolBar(TSharedPtr<FExtender> Extender);
+	void AddDialogueTreeToolBar(TSharedPtr<FExtender> Extender);
+public:
 	void FillModesToolbar(FToolBarBuilder& ToolbarBuilder);
+	void FillDebuggerToolbar(FToolBarBuilder& ToolbarBuilder);
 	void FillDialogueTreeToolbar(FToolBarBuilder& ToolbarBuilder);
 protected:
-	TWeakPtr<FDialogueTreeGraphEditor> DialogueTreeEditor;
+	TWeakPtr<FDialogueEditor> DialogueTreeEditor;
 };

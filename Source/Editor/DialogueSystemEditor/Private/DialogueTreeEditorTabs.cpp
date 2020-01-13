@@ -3,6 +3,9 @@
 
 #include "DialogueTreeEditorTabs.h"
 
-const FName FDialogueTreeGraphEditorTabs::GraphDetailsID(TEXT("DialogueTreeEditor_Properties"));
-const FName FDialogueTreeGraphEditorTabs::SearchID(TEXT("DialogueTreeEditor_Search"));
-const FName FDialogueTreeGraphEditorTabs::GraphEditorID(TEXT("Document"));
+// Tab identifiers
+const FName FDialogueTreeEditorTabs::GraphDetailsID(TEXT("DialogueTreeEditor_Properties"));
+const FName FDialogueTreeEditorTabs::SearchID(TEXT("DialogueTreeEditor_Search"));
+
+// Document tab identifiers
+const FName FDialogueTreeEditorTabs::GraphEditorID(TEXT("Document"));
