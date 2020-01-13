@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EdGraph/EdGraphNode.h"
+#include "DialogueTree.h"
 #include "DialogueGraphNode.generated.h"
 
 /**
@@ -18,10 +19,12 @@ public:
 	UPROPERTY(transient)
 		UDialogueGraphNode* ParentNode;
 	UPROPERTY()
-		TArray<UDialogueGraphNode*> SubNodes;
+	TArray<UDialogueGraphNode*> SubNodes;
 
-
+	UPROPERTY()
+	UObject* Instance;
 	// ~Begin UEdGraphNode Interface
+	virtual void PostPlacedNewNode() override;
 	virtual class UDialogueGraph* GetDialogueGraph();
 	virtual void AutowireNewNode(UEdGraphPin* FromPin) override;
 	virtual void PrepareForCopying() override;
@@ -47,4 +50,7 @@ public:
 	virtual UEdGraphPin* GetInputPin(int32 InputIndex = 0) const;
 
 	virtual UEdGraphPin* GetOutputPin(int32 InputIndex = 0)const;
+
+public:
+	virtual void InitializeInstance();
 };

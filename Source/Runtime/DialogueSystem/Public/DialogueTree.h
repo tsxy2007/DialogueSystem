@@ -5,21 +5,33 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Engine/Blueprint.h"
+#include "DialogueNode.h"
+//#include "DialogueNode.h"
 #include "DialogueTree.generated.h"
 
 class UEdGraph;
-
-
-USTRUCT(Blueprintable)
-struct FDialogueNode
-{
-	GENERATED_USTRUCT_BODY();
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue Node")
-		int32 id;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Dialogue Node")
-		FText Text;
-};
+class UDialogueNode;
+//
+//USTRUCT(Blueprintable)
+//struct FDialogueNode 
+//{
+//	GENERATED_USTRUCT_BODY()
+//public:
+//	UPROPERTY()
+//		FText Speaker;
+//
+//	UPROPERTY()
+//		FText Content;
+//
+//	UPROPERTY()
+//		EDialogueSpeakType SpeakType;
+//
+//	UPROPERTY()
+//		TArray<int32> NextDialogues;
+//
+//	UPROPERTY()
+//		class UTexture2D* BG;
+//};
 
 /**
  * 
@@ -38,5 +50,5 @@ class DIALOGUESYSTEM_API UDialogueTree : public UObject
 #endif // WITH_EDITORONLY_DATA
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Dialogue)
-		TArray<FDialogueNode> Data;
+	TArray<UDialogueNode*> Data;
 };

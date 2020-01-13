@@ -6,6 +6,7 @@
 #include "EdGraph/EdGraph.h"
 #include "DialogueGraph.generated.h"
 
+class UDialogueGraphNode;
 /**
  * 
  */
@@ -48,6 +49,16 @@ public:
 	// begin
 	virtual void Serialize(FArchive& Ar) override;
 	// end
+
+
+
+	template <class T>
+	T* SpawnNodeInsideGraph(TSubclassOf<UDialogueGraphNode> InNodeClass)
+	{
+		T* SpawenNode = NewObject<T>(this, InNodeClass, NAME_None, RF_Transactional);
+		//AddNode(SpawenNode);
+		return SpawenNode;
+	}
 
 protected:
 	uint32 bLockUpdates : 1;
