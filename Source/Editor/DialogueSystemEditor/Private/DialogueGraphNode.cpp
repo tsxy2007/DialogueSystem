@@ -11,6 +11,11 @@ UDialogueGraphNode::UDialogueGraphNode(const FObjectInitializer& ObjectInitializ
 	:Super(ObjectInitializer)
 {}
 
+void UDialogueGraphNode::PostPlacedNewNode()
+{
+
+}
+
 UDialogueGraph * UDialogueGraphNode::GetDialogueGraph()
 {
 	return CastChecked<UDialogueGraph>(GetGraph());

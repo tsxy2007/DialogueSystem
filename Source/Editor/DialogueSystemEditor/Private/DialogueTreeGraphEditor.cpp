@@ -520,6 +520,7 @@ void FDialogueTreeGraphEditor::RegisterToolbarTab(const TSharedRef<class FTabMan
 
 void FDialogueTreeGraphEditor::RestoreDialogueTree()
 {
+	return;
 	UDialogueGraph* MyGraph = Cast<UDialogueGraph>(DialogueTree->DTGraph);
 	const bool bNewGraph = MyGraph == nullptr;
 	if (MyGraph == nullptr)
