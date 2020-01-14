@@ -27,4 +27,7 @@ class DIALOGUESYSTEM_API UDialogueTree : public UObject
 
 	UPROPERTY()
 	class UDTNode* RootNode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Dialogue)
+		class UTexture2D* BG;
 };

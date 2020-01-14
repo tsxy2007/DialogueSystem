@@ -39,6 +39,7 @@
 #include "DialogueTreeEditorTabFactories.h"
 #include "EdGraphSchema_DialogueTree.h"
 #include "DialogueGraphNode_Root.h"
+#include "Util/DialogueTreeEditorUtils.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
@@ -107,7 +108,6 @@ void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode, const TS
 	{
 		FGraphEditorCommands::Register();
 		FSTCommonCommands::Register();
-		FSTDebuggerCommands::Register();
 
 
 		const TSharedRef<FTabManager::FLayout> DummyLayout = FTabManager::NewLayout("NullLayout")->AddArea(FTabManager::NewPrimaryArea());
@@ -690,8 +690,8 @@ void FDialogueEditor::OnSelectedNodesChanged(const TSet<class UObject*>& NewSele
 {
 	SelectedNodesCount = NewSelection.Num();
 
-	//DialogueTreeEditorUtils::FPropertySelectionInfo SelectionInfo;
-	TArray<UObject*> Selection;// = DialogueTreeEditorUtils::GetSelectionForPropertyEditor(NewSelection, SelectionInfo);
+	DialogueTreeEditorUtils::FPropertySelectionInfo SelectionInfo;
+	TArray<UObject*> Selection = DialogueTreeEditorUtils::GetSelectionForPropertyEditor(NewSelection, SelectionInfo);
 	UDialogueEdGraph* MyGraph = Cast<UDialogueEdGraph>(Dialogue->BTGraph);
 	if (SelectedNodesCount == 1)
 	{
@@ -713,7 +713,7 @@ void FDialogueEditor::OnSelectedNodesChanged(const TSet<class UObject*>& NewSele
 					break;
 				}
 			}
-			DetailsView->SetObject(RootNode->NodeInstance);
+			DetailsView->SetObject(Dialogue);
 		}
 		else
 		{

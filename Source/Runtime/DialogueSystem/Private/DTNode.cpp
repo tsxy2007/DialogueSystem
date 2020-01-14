@@ -32,57 +32,13 @@ void UDTNode::InitializeNode(UDTNode* InParentNode, uint16 InExecutionIndex, uin
 
 void UDTNode::InitializeFromAsset(UDialogueTree& Asset)
 {
-
+	TreeAsset = &Asset;
 }
 
-void UDTNode::InitializeMemory(UDialogueTreeComponent& OwnerComp, uint8* NodeMemory, EDTMemoryInit::Type InitType) const
+void UDTNode::InitializeIndex(uint16 InLastExecuionIndex)
 {
-
+	LastExecutionIndex = InLastExecuionIndex;
 }
-
-void UDTNode::CleanupMemory(UDialogueTreeComponent& OwnerComp, uint8* NodeMemory, EDTMemoryClear::Type CleanupType) const
-{
-
-}
-
-void UDTNode::OnInstanceCreated(UDialogueTreeComponent& OwnerComp)
-{
-
-}
-
-UGameplayTasksComponent * UDTNode::GetGameplayTasksComponent(const UGameplayTask & Task) const
-{
-	return nullptr;
-}
-
-AActor * UDTNode::GetGameplayTaskOwner(const UGameplayTask * Task) const
-{
-	return nullptr;
-}
-
-AActor * UDTNode::GetGameplayTaskAvatar(const UGameplayTask * Task) const
-{
-	return nullptr;
-}
-
-uint8 UDTNode::GetGameplayTaskDefaultPriority() const
-{
-	return uint8();
-}
-
-void UDTNode::OnGameplayTaskInitialized(UGameplayTask & Task)
-{
-}
-
-void UDTNode::OnGameplayTaskActivated(UGameplayTask & Task)
-{
-}
-
-void UDTNode::OnGameplayTaskDeactivated(UGameplayTask & Task)
-{
-}
-
-
 
 #if WITH_EDITOR
 

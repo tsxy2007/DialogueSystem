@@ -150,6 +150,7 @@ void FDialogueTreeEditorToolbar::FillDebuggerToolbar(FToolBarBuilder& ToolbarBui
 
 void FDialogueTreeEditorToolbar::FillDialogueTreeToolbar(FToolBarBuilder& ToolbarBuilder)
 {
+	return;
 	check(DialogueTreeEditor.IsValid());
 	TSharedPtr<FDialogueEditor> DialogueTreeEditorPtr = DialogueTreeEditor.Pin();
 
