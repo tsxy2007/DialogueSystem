@@ -20,7 +20,7 @@
 #include "DialogueEditor.h"
 #include "Toolkits/ToolkitManager.h"
 #include "EdGraphNode_Comment.h"
-#include "Dialogue.h"
+#include "DialogueTree.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTreeEditor"
 
@@ -41,7 +41,7 @@ UEdGraphNode* FDialogueTreeSchemaAction_AddComment::PerformAction(class UEdGraph
 	UEdGraphNode_Comment* const CommentTemplate = NewObject<UEdGraphNode_Comment>();
 	FVector2D SpawnLocation = Location;
 	TSharedPtr<IDialogueEditor> STEditor;
-	if (UDialogue* const STAsset = Cast<UDialogue>(ParentGraph->GetOuter()))
+	if (UDialogueTree* const STAsset = Cast<UDialogueTree>(ParentGraph->GetOuter()))
 	{
 		TSharedPtr<IToolkit> STAssetEditor = FToolkitManager::Get().FindEditorForAsset(STAsset);
 		if (STAssetEditor.IsValid())
@@ -176,7 +176,7 @@ int32 UEdGraphSchema_DialogueTree::GetNodeSelectionCount(const UEdGraph* Graph) 
 	if (Graph)
 	{
 		TSharedPtr<IDialogueEditor> STEditor;
-		if (UDialogue* STAsset  = Cast<UDialogue>(Graph->GetOuter()))
+		if (UDialogueTree* STAsset  = Cast<UDialogueTree>(Graph->GetOuter()))
 		{
 			TSharedPtr<IToolkit> STAssetEditor = FToolkitManager::Get().FindEditorForAsset(STAsset);
 			if (STAssetEditor.IsValid())

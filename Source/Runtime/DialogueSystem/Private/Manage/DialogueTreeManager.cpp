@@ -2,7 +2,7 @@
 
 
 #include "Manage/DialogueTreeManager.h"
-#include "Dialogue.h"
+#include "DialogueTree.h"
 #include "DTCompositeNode.h"
 
 UDialogueTreeManager::UDialogueTreeManager(const FObjectInitializer& Obj)
@@ -11,7 +11,7 @@ UDialogueTreeManager::UDialogueTreeManager(const FObjectInitializer& Obj)
 
 }
 
-bool UDialogueTreeManager::LoadTree(UDialogue& Asset, USTCompositeNode* Root, uint16& InstanceMemorySize)
+bool UDialogueTreeManager::LoadTree(UDialogueTree& Asset, USTCompositeNode* Root, uint16& InstanceMemorySize)
 {
 
 	return true;

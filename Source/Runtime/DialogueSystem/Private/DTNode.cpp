@@ -30,7 +30,7 @@ void UDTNode::InitializeNode(UDTCompositeNode* InParentNode, uint16 InExecutionI
 	TreeDepth = InTreeDepth;
 }
 
-void UDTNode::InitializeFromAsset(UDialogue& Asset)
+void UDTNode::InitializeFromAsset(UDialogueTree& Asset)
 {
 
 }

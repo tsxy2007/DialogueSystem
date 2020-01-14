@@ -10,6 +10,7 @@
 #include "EdGraphUtilities.h"
 #include "SGraphNode_DialogueTree.h"
 #include "SGraphNodeDT.h"
+#include "Details/DialogueTreeDetails.h"
 
 IMPLEMENT_GAME_MODULE(FDialogueSystemEditorModule, DialogueSystemEditor);
 DEFINE_LOG_CATEGORY(LogDialogueEditor);
@@ -54,7 +55,7 @@ void FDialogueSystemEditorModule::StartupModule()
 
 	FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 	//PropertyModule.RegisterCustomPropertyTypeLayout("BlackboardKeySelector", FOnGetPropertyTypeCustomizationInstance::CreateStatic(&FBlackboardSelectorDetails::MakeInstance));
-	//PropertyModule.RegisterCustomClassLayout("BTDecorator_Blackboard", FOnGetDetailCustomizationInstance::CreateStatic(&FBlackboardDecoratorDetails::MakeInstance));
+	PropertyModule.RegisterCustomClassLayout("DTNode", FOnGetDetailCustomizationInstance::CreateStatic(&FDialogueTreeDetails::MakeInstance));
 	//PropertyModule.RegisterCustomClassLayout("BTDecorator", FOnGetDetailCustomizationInstance::CreateStatic(&FBehaviorDecoratorDetails::MakeInstance));
 	PropertyModule.NotifyCustomizationModuleChanged();
 }
@@ -93,7 +94,7 @@ void FDialogueSystemEditorModule::ShutdownModule()
 	{
 		FPropertyEditorModule& PropertyModule = FModuleManager::LoadModuleChecked<FPropertyEditorModule>("PropertyEditor");
 		//PropertyModule.UnregisterCustomPropertyTypeLayout("BlackboardKeySelector");
-		//PropertyModule.UnregisterCustomClassLayout("BTDecorator_Blackboard");
+		PropertyModule.UnregisterCustomClassLayout("DTNode");
 		//PropertyModule.UnregisterCustomClassLayout("BTDecorator");
 		PropertyModule.NotifyCustomizationModuleChanged();
 	}

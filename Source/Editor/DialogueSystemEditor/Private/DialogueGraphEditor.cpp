@@ -6,7 +6,7 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/Commands/GenericCommands.h"
 #include "DialogueEdGraph.h"
-#include "Dialogue.h"
+#include "DialogueTree.h"
 
 #define LOCTEXT_NAMESPACE "DialogueGraphEditor"
 FDialogueGraphEditor::FDialogueGraphEditor()

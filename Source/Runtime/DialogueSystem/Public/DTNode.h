@@ -11,7 +11,7 @@
 #include "DTNode.generated.h"
 
 class UWorld;
-class UDialogue;
+class UDialogueTree;
 class UDTCompositeNode;
 class UDialogueTreeComponent;
 struct FDialogueTreeSearchData;
@@ -34,7 +34,7 @@ public:
 	void InitializeNode(UDTCompositeNode* InParentNode,uint16 InExecutionIndex,uint16 InMemoryOffset,uint8 InTreeDepth);
 
 	// initialize any asset related data
-	virtual void InitializeFromAsset(UDialogue& Asset);
+	virtual void InitializeFromAsset(UDialogueTree& Asset);
 
 	// initialize memory block
 	virtual void InitializeMemory(UDialogueTreeComponent& OwnerComp, uint8* NodeMemory, EDTMemoryInit::Type InitType)const;
@@ -58,7 +58,7 @@ public:
 
 	
 
-	UDialogue* GetTreeAsset() const;
+	UDialogueTree* GetTreeAsset() const;
 
 	UDTCompositeNode* GetParentNode()const;
 #if USE_DialogueTREE_DEBUGGER
@@ -84,7 +84,7 @@ public:
 	FString NodeName;
 private:
 	UPROPERTY()
-		UDialogue* TreeAsset;
+		UDialogueTree* TreeAsset;
 
 	UPROPERTY()
 		UDTCompositeNode* ParentNode;
@@ -111,7 +111,7 @@ protected:
 };
 
 
-FORCEINLINE UDialogue* UDTNode::GetTreeAsset()const
+FORCEINLINE UDialogueTree* UDTNode::GetTreeAsset()const
 {
 	return TreeAsset;
 }

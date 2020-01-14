@@ -18,7 +18,7 @@ namespace DialogueTreeColors
 		const FLinearColor CompositeScoped(0.05f, 0.05f, 0.05f);
 		const FLinearColor Service(0.0f, 0.4f, 0.22f);
 		const FLinearColor Default(0.15f, 0.15f, 0.15f);
-		const FLinearColor Root(0.5f, 0.5f, 0.5f, 0.1f);
+		const FLinearColor Root(1.0f, 0.f, 0.f, 0.1f);
 		const FLinearColor Error(1.0f, 0.0f, 0.0f);
 	}
 

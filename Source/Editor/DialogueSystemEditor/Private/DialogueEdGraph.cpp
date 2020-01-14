@@ -6,7 +6,7 @@
 #include "DialogueSystemEditor.h"
 #include "DialogueTreeEditorTypes.h"
 #include "DTNode.h"
-#include "Dialogue.h"
+#include "DialogueTree.h"
 #include "DTCompositeNode.h"
 #include "DialogueTreeGraphNode.h"
 #include "DialogueGraphNode_Root.h"
@@ -25,7 +25,7 @@ namespace STGraphHelpers
 
 	}
 
-	void CreateChildren(UDialogue* STAsset, UDTCompositeNode* RootNode, const UDialogueTreeGraphNode* RootEdNode, uint16* ExcutionIndex, uint8 TreeDepth)
+	void CreateChildren(UDialogueTree* STAsset, UDTCompositeNode* RootNode, const UDialogueTreeGraphNode* RootEdNode, uint16* ExcutionIndex, uint8 TreeDepth)
 	{
 		if (RootEdNode == nullptr)
 		{
@@ -54,7 +54,7 @@ namespace STGraphHelpers
 
 				//comp
 				UDTCompositeNode* CompositeInstance = Cast<UDTCompositeNode>(GraphNode->NodeInstance);
-				if (CompositeInstance&&Cast<UDialogue>(CompositeInstance->GetOuter()) == nullptr)
+				if (CompositeInstance&&Cast<UDialogueTree>(CompositeInstance->GetOuter()) == nullptr)
 				{
 					CompositeInstance->Rename(nullptr, STAsset);
 				}
@@ -69,7 +69,7 @@ namespace STGraphHelpers
 				ChildInfo.ChildComposite = CompositeInstance;
 
 				UDTNode* ChildNode = CompositeInstance ? (UDTNode*)CompositeInstance : nullptr;
-				if (ChildNode && Cast<UDialogue>(ChildNode->GetOuter()) == nullptr)
+				if (ChildNode && Cast<UDialogueTree>(ChildNode->GetOuter()) == nullptr)
 				{
 					ChildNode->Rename(nullptr, STAsset);
 				}
@@ -189,7 +189,7 @@ void UDialogueEdGraph::MarkVersion()
 
 void UDialogueEdGraph::CreateSTFromGraph(class UDialogueTreeGraphNode* RootEdNode)
 {
-	UDialogue* STAsset = Cast<UDialogue>(GetOuter());
+	UDialogueTree* STAsset = Cast<UDialogueTree>(GetOuter());
 	STAsset->RootNode = nullptr;
 
 	uint16 ExecutionIndex = 0;

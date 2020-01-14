@@ -6,7 +6,7 @@
 #include "EditorUndoClient.h"
 #include "GraphEditor.h"
 
-class UDialogue;
+class UDialogueTree;
 /**
  * 
  */
@@ -44,7 +44,7 @@ public:
 
 private:
 
-	UDialogue* DialogueTree;
+	UDialogueTree* DialogueTree;
 
 	FDelegateHandle OnPackageSaveDelegateHandle;
 protected:

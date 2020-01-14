@@ -6,13 +6,13 @@
 #include "UObject/NoExportTypes.h"
 #include "UObject/Object.h"
 #include "Engine/Blueprint.h"
-#include "Dialogue.generated.h"
+#include "DialogueTree.generated.h"
 
 /**
  * 
  */
 UCLASS(BlueprintType)
-class DIALOGUESYSTEM_API UDialogue : public UObject
+class DIALOGUESYSTEM_API UDialogueTree : public UObject
 {
 	GENERATED_UCLASS_BODY()
 

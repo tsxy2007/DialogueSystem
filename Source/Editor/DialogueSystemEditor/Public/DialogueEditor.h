@@ -64,7 +64,7 @@ public:
 
 	bool IsDebuggerReady() const;
 
-	UDialogue* GetDialogueTree() const;
+	UDialogueTree* GetDialogueTree() const;
 	//virtual void OnClassListUpdated() override;
 
 	TSharedRef<SWidget> SpawnProperties();
@@ -131,7 +131,7 @@ private:
 	TSharedPtr<class FDialogueTreeEditorToolbar> ToolbarBuilder;
 	TSharedPtr<class FDocumentTracker> DocumentManager;
 	TWeakPtr< class FDocumentTabFactory> GraphEditorTabFactoryPtr;
-	class UDialogue* Dialogue;
+	class UDialogueTree* Dialogue;
 
 	/** Called when the selection changes in the GraphEditor */
 	virtual void OnSelectedNodesChanged(const TSet<class UObject*>& NewSelection) override;

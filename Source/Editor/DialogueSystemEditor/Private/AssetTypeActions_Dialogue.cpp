@@ -5,14 +5,14 @@
 #include "Framework/Application/SlateApplication.h"
 #include "Modules/ModuleManager.h"
 #include "DialogueSystem.h"
-#include "Dialogue.h"
+#include "DialogueTree.h"
 #include "DialogueSystemEditor.h"
 #include "DialogueEditor.h"
 
 #define  LOCTEXT_NAMESPACE "AssetTypeActions"
 UClass* FAssetTypeActions_Dialogue::GetSupportedClass() const
 {
-	return UDialogue::StaticClass();
+	return UDialogueTree::StaticClass();
 }
 
 void FAssetTypeActions_Dialogue::OpenAssetEditor(const TArray<UObject*>& InObjects, TSharedPtr<class IToolkitHost> EditWithinLevelEditor /*= TSharedPtr<IToolkitHost>()*/)
@@ -20,7 +20,7 @@ void FAssetTypeActions_Dialogue::OpenAssetEditor(const TArray<UObject*>& InObjec
 	EToolkitMode::Type Mode = EditWithinLevelEditor.IsValid() ? EToolkitMode::WorldCentric : EToolkitMode::Standalone;
 	for (auto Object : InObjects)
 	{
-		auto Dialogue = Cast<UDialogue>(Object);
+		auto Dialogue = Cast<UDialogueTree>(Object);
 		if (Dialogue != nullptr)
 		{
 			bool  bFoundInAsset = false;
@@ -53,7 +53,7 @@ void FAssetTypeActions_Dialogue::PerformAssetDiff(UObject* Asset1, UObject* Asse
 
 }
 
-void FAssetTypeActions_Dialogue::OpenInDefaults(class UDialogue* OldBehaviorTree, class UDialogue* NewBehaviorTree) const
+void FAssetTypeActions_Dialogue::OpenInDefaults(class UDialogueTree* OldBehaviorTree, class UDialogueTree* NewBehaviorTree) const
 {
 
 }

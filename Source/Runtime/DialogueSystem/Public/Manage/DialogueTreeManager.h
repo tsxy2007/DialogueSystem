@@ -6,7 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "DialogueTreeManager.generated.h"
 
-class UDialogue;
+class UDialogueTree;
 class USTCompositeNode;
 /**
  * 
@@ -18,6 +18,6 @@ class DIALOGUESYSTEM_API UDialogueTreeManager : public UObject
 	
 
 public:
-	bool LoadTree(UDialogue& Asset, USTCompositeNode* Root, uint16& InstanceMemorySize);
+	bool LoadTree(UDialogueTree& Asset, USTCompositeNode* Root, uint16& InstanceMemorySize);
 
 };

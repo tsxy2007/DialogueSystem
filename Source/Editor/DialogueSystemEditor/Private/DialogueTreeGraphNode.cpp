@@ -4,7 +4,7 @@
 #include "DialogueTreeGraphNode.h"
 #include "DialogueTreeEditorTypes.h"
 #include "DTNode.h"
-#include "Dialogue.h"
+#include "DialogueTree.h"
 
 UDialogueTreeGraphNode::UDialogueTreeGraphNode(const FObjectInitializer& ObjectInitializer)
 	:Super(ObjectInitializer)
@@ -74,7 +74,7 @@ bool UDialogueTreeGraphNode::HasErrors() const
 void UDialogueTreeGraphNode::InitializeInstance()
 {
 	UDTNode* STNode = Cast<UDTNode>(NodeInstance);
-	UDialogue* STAsset = STNode ? Cast<UDialogue>(STNode->GetOuter()) : nullptr;
+	UDialogueTree* STAsset = STNode ? Cast<UDialogueTree>(STNode->GetOuter()) : nullptr;
 	if (STNode && STAsset)
 	{
 		STNode->InitializeFromAsset(*STAsset);

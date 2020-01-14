@@ -31,13 +31,14 @@
 #include "Kismet2/BlueprintEditorUtils.h"
 #include "ClassViewerFilter.h"
 
-#include "Dialogue.h"
+#include "DialogueTree.h"
 #include "DialogueTreeEditorCommands.h"
 #include "DialogueTreeEditorTabs.h"
 #include "DialogueEdGraph.h"
 #include "DialogueEditorModes.h"
 #include "DialogueTreeEditorTabFactories.h"
 #include "EdGraphSchema_DialogueTree.h"
+#include "DialogueGraphNode_Root.h"
 
 #define LOCTEXT_NAMESPACE "DialogueEditor"
 
@@ -66,7 +67,7 @@ void FDialogueEditor::RegisterToolbarTab(const TSharedRef<class FTabManager>& In
 void FDialogueEditor::InitDialogueEditor(const EToolkitMode::Type Mode, const TSharedPtr< IToolkitHost >& InitToolkitHost, UObject* InObject)
 {
 
-	UDialogue* DialogueTreeToEdit = Cast<UDialogue>(InObject);
+	UDialogueTree* DialogueTreeToEdit = Cast<UDialogueTree>(InObject);
 
 	if (DialogueTreeToEdit != nullptr)
 	{
@@ -270,7 +271,7 @@ bool FDialogueEditor::IsDebuggerReady() const
 	return false;
 }
 
-UDialogue* FDialogueEditor::GetDialogueTree() const
+UDialogueTree* FDialogueEditor::GetDialogueTree() const
 {
 	return Dialogue;
 }
@@ -278,12 +279,18 @@ UDialogue* FDialogueEditor::GetDialogueTree() const
 TSharedRef<SWidget> FDialogueEditor::SpawnProperties()
 {
 	return SNew(SVerticalBox)
-		+ SVerticalBox::Slot()
-		.FillHeight(1.f)
+		/*+ SVerticalBox::Slot()
+		.FillHeight(0.2f)
 		.HAlign(HAlign_Fill)
 		[
 			SNew(STextBlock)
 			.Text(FText::FromString(TEXT("Properties")))
+		]*/
+		+ SVerticalBox::Slot()
+		.FillHeight(0.8f)
+		.HAlign(HAlign_Fill)
+		[
+			DetailsView.ToSharedRef()
 		];
 }
 
@@ -683,12 +690,36 @@ void FDialogueEditor::OnSelectedNodesChanged(const TSet<class UObject*>& NewSele
 {
 	SelectedNodesCount = NewSelection.Num();
 
+	//DialogueTreeEditorUtils::FPropertySelectionInfo SelectionInfo;
+	TArray<UObject*> Selection;// = DialogueTreeEditorUtils::GetSelectionForPropertyEditor(NewSelection, SelectionInfo);
 	UDialogueEdGraph* MyGraph = Cast<UDialogueEdGraph>(Dialogue->BTGraph);
-	if (SelectedNodesCount)
+	if (SelectedNodesCount == 1)
 	{
-
+		if (DetailsView.IsValid())
+		{
+			DetailsView->SetObjects(Selection);
+		}
 	}
-
+	else if (DetailsView.IsValid())
+	{
+		if (Selection.Num() == 0)
+		{
+			UDialogueTreeGraphNode* RootNode = nullptr;
+			for (const auto& Node : MyGraph->Nodes)
+			{
+				RootNode = Cast<UDialogueGraphNode_Root>(Node);
+				if (RootNode != nullptr)
+				{
+					break;
+				}
+			}
+			DetailsView->SetObject(RootNode->NodeInstance);
+		}
+		else
+		{
+			DetailsView->SetObject(nullptr);
+		}
+	}
 
 }
 #undef LOCTEXT_NAMESPACE

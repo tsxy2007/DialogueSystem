@@ -22,5 +22,5 @@ public:
 private:
 
 	/* Called to open the Behavior Tree defaults view, this opens whatever text dif tool the user has */
-	void OpenInDefaults(class UDialogue* OldBehaviorTree, class UDialogue* NewBehaviorTree) const;
+	void OpenInDefaults(class UDialogueTree* OldBehaviorTree, class UDialogueTree* NewBehaviorTree) const;
 };
