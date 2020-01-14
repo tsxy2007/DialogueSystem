@@ -12,13 +12,21 @@
 
 class UWorld;
 class UDialogueTree;
-class UDTCompositeNode;
+class UDTNode;
 class UDialogueTreeComponent;
 struct FDialogueTreeSearchData;
 
 struct FSTInstanceNodeMemory
 {
 	int32 NodeIdx;
+};
+// 对话类型
+UENUM(BlueprintType)
+enum class EDialogueType1 : uint8
+{
+	EDT_NPC,	// NPC 
+	EDT_My,		// 自己说话
+	EDT_MySelect,// 右侧可以选择的对话
 };
 /**
  * 
@@ -31,7 +39,7 @@ public:
 	virtual UWorld* GetWorld() const override;
 	
 	// fill in data about tree structure
-	void InitializeNode(UDTCompositeNode* InParentNode,uint16 InExecutionIndex,uint16 InMemoryOffset,uint8 InTreeDepth);
+	void InitializeNode(UDTNode* InParentNode,uint16 InExecutionIndex,uint16 InMemoryOffset,uint8 InTreeDepth);
 
 	// initialize any asset related data
 	virtual void InitializeFromAsset(UDialogueTree& Asset);
@@ -60,7 +68,7 @@ public:
 
 	UDialogueTree* GetTreeAsset() const;
 
-	UDTCompositeNode* GetParentNode()const;
+	UDTNode* GetParentNode()const;
 #if USE_DialogueTREE_DEBUGGER
 	UDTNode* GetNextNode()const;
 #endif
@@ -82,12 +90,27 @@ public:
 
 	UPROPERTY(Category = Description, EditAnywhere)
 	FString NodeName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Dialogue)
+		FText Speaker;// 说话的人
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Dialogue)
+		FText Content; // 说话的内容
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Dialogue)
+		EDialogueType1 DialogueType; // 说话人方式下方，右侧
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Dialogue)
+		TArray<int32> NextDialogues; // 下一个对话
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Dialogue)
+		class UTexture2D* BG;
 private:
 	UPROPERTY()
 		UDialogueTree* TreeAsset;
 
 	UPROPERTY()
-		UDTCompositeNode* ParentNode;
+		UDTNode* ParentNode;
 
 #if USE_DialogueTREE_DEBUGGER
 	UDTNode* NextExecutionNode;
@@ -116,7 +139,7 @@ FORCEINLINE UDialogueTree* UDTNode::GetTreeAsset()const
 	return TreeAsset;
 }
 
-FORCEINLINE UDTCompositeNode* UDTNode::GetParentNode() const
+FORCEINLINE UDTNode* UDTNode::GetParentNode() const
 {
 	return ParentNode;
 }

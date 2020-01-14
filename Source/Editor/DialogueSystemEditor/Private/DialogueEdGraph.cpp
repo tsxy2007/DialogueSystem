@@ -7,7 +7,7 @@
 #include "DialogueTreeEditorTypes.h"
 #include "DTNode.h"
 #include "DialogueTree.h"
-#include "DTCompositeNode.h"
+
 #include "DialogueTreeGraphNode.h"
 #include "DialogueGraphNode_Root.h"
 #include "EdGraph/EdGraphSchema.h"
@@ -15,7 +15,7 @@
 
 namespace STGraphHelpers
 {
-	void InitializeInjectedNodes(UDialogueTreeGraphNode* GraphNode, UDTCompositeNode* RootNode, uint16 ExecutionIndex, uint8 TreeDepth, int32 Index)
+	void InitializeInjectedNodes(UDialogueTreeGraphNode* GraphNode, UDTNode* RootNode, uint16 ExecutionIndex, uint8 TreeDepth, int32 Index)
 	{
 
 	}
@@ -25,72 +25,72 @@ namespace STGraphHelpers
 
 	}
 
-	void CreateChildren(UDialogueTree* STAsset, UDTCompositeNode* RootNode, const UDialogueTreeGraphNode* RootEdNode, uint16* ExcutionIndex, uint8 TreeDepth)
+	void CreateChildren(UDialogueTree* STAsset, UDTNode* RootNode, const UDialogueTreeGraphNode* RootEdNode, uint16* ExcutionIndex, uint8 TreeDepth)
 	{
-		if (RootEdNode == nullptr)
-		{
-			return;
-		}
-		RootNode->Children.Reset();
-		
-		int32 ChildIdx = 0;
-		for (int32 PinIdx = 0; PinIdx < RootEdNode->Pins.Num(); PinIdx++)
-		{
-			UEdGraphPin* Pin = RootEdNode->Pins[PinIdx];
-			if (Pin->Direction != EGPD_Output)
-			{
-				continue;
-			}
-			Pin->LinkedTo.Sort(FCompareNodeXLocation());
-			for (int32 Index = 0; Index < Pin->LinkedTo.Num(); ++Index)
-			{
-				UDialogueTreeGraphNode* GraphNode = Cast<UDialogueTreeGraphNode>(Pin->LinkedTo[Index]->GetOwningNode());
-				if (GraphNode == nullptr)
-				{
-					continue;;
-				}
-				// TODO: TASK
+	//	if (RootEdNode == nullptr)
+	//	{
+	//		return;
+	//	}
+	//	RootNode->Children.Reset();
+	//	
+	//	int32 ChildIdx = 0;
+	//	for (int32 PinIdx = 0; PinIdx < RootEdNode->Pins.Num(); PinIdx++)
+	//	{
+	//		UEdGraphPin* Pin = RootEdNode->Pins[PinIdx];
+	//		if (Pin->Direction != EGPD_Output)
+	//		{
+	//			continue;
+	//		}
+	//		Pin->LinkedTo.Sort(FCompareNodeXLocation());
+	//		for (int32 Index = 0; Index < Pin->LinkedTo.Num(); ++Index)
+	//		{
+	//			UDialogueTreeGraphNode* GraphNode = Cast<UDialogueTreeGraphNode>(Pin->LinkedTo[Index]->GetOwningNode());
+	//			if (GraphNode == nullptr)
+	//			{
+	//				continue;;
+	//			}
+	//			// TODO: TASK
 
 
-				//comp
-				UDTCompositeNode* CompositeInstance = Cast<UDTCompositeNode>(GraphNode->NodeInstance);
-				if (CompositeInstance&&Cast<UDialogueTree>(CompositeInstance->GetOuter()) == nullptr)
-				{
-					CompositeInstance->Rename(nullptr, STAsset);
-				}
+	//			//comp
+	//			UDTNode* CompositeInstance = Cast<UDTNode>(GraphNode->NodeInstance);
+	//			if (CompositeInstance&&Cast<UDialogueTree>(CompositeInstance->GetOuter()) == nullptr)
+	//			{
+	//				CompositeInstance->Rename(nullptr, STAsset);
+	//			}
 
-				if (CompositeInstance == nullptr)
-				{
-					continue;
-				}
+	//			if (CompositeInstance == nullptr)
+	//			{
+	//				continue;
+	//			}
 
-				ChildIdx = RootNode->Children.AddDefaulted();
-				FDTCompositeChild& ChildInfo = RootNode->Children[ChildIdx];
-				ChildInfo.ChildComposite = CompositeInstance;
+	//			ChildIdx = RootNode->Children.AddDefaulted();
+	//			FDTCompositeChild& ChildInfo = RootNode->Children[ChildIdx];
+	//			ChildInfo.ChildComposite = CompositeInstance;
 
-				UDTNode* ChildNode = CompositeInstance ? (UDTNode*)CompositeInstance : nullptr;
-				if (ChildNode && Cast<UDialogueTree>(ChildNode->GetOuter()) == nullptr)
-				{
-					ChildNode->Rename(nullptr, STAsset);
-				}
+	//			UDTNode* ChildNode = CompositeInstance ? (UDTNode*)CompositeInstance : nullptr;
+	//			if (ChildNode && Cast<UDialogueTree>(ChildNode->GetOuter()) == nullptr)
+	//			{
+	//				ChildNode->Rename(nullptr, STAsset);
+	//			}
 
-				InitializeInjectedNodes(GraphNode, RootNode, *ExcutionIndex, TreeDepth, ChildIdx);
+	//			InitializeInjectedNodes(GraphNode, RootNode, *ExcutionIndex, TreeDepth, ChildIdx);
 
-				// 
+	//			// 
 
-				ChildNode->InitializeNode(RootNode, *ExcutionIndex, 0, TreeDepth);
-				*ExcutionIndex += 1;
+	//			ChildNode->InitializeNode(RootNode, *ExcutionIndex, 0, TreeDepth);
+	//			*ExcutionIndex += 1;
 
-				VerifyDecorators(GraphNode);
-				
-				if (CompositeInstance)
-				{
-					CreateChildren(STAsset, CompositeInstance, GraphNode, ExcutionIndex, TreeDepth + 1);
-					CompositeInstance->InitializeComposite((*ExcutionIndex) - 1);
-				}
-				
-			}
-		}
+	//			VerifyDecorators(GraphNode);
+	//			
+	//			if (CompositeInstance)
+	//			{
+	//				CreateChildren(STAsset, CompositeInstance, GraphNode, ExcutionIndex, TreeDepth + 1);
+	//				CompositeInstance->InitializeComposite((*ExcutionIndex) - 1);
+	//			}
+	//			
+	//		}
+	//	}
 
 	}
 }
@@ -194,7 +194,7 @@ void UDialogueEdGraph::CreateSTFromGraph(class UDialogueTreeGraphNode* RootEdNod
 
 	uint16 ExecutionIndex = 0;
 	uint8 TreeDepth = 0;
-	STAsset->RootNode = Cast<UDTCompositeNode>(RootEdNode->NodeInstance);
+	STAsset->RootNode = Cast<UDTNode>(RootEdNode->NodeInstance);
 	if (STAsset->RootNode)
 	{
 		STAsset->RootNode->InitializeNode(nullptr, ExecutionIndex, 0, TreeDepth);
@@ -210,7 +210,7 @@ void UDialogueEdGraph::CreateSTFromGraph(class UDialogueTreeGraphNode* RootEdNod
 	
 	if (STAsset->RootNode)
 	{
-		STAsset->RootNode->InitializeComposite(ExecutionIndex - 1);
+		//STAsset->RootNode->InitializeComposite(ExecutionIndex - 1);
 	}
 	RemoveOrphanedNodes();
 }

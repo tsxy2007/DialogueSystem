@@ -8,13 +8,11 @@
 #include "DialogueSystemEditor.h"
 #include "DialogueGraphTypes.h"
 #include "DTNode.h"
-#include "DialogueGraphNode_Composite.h"
 #include "DialogueGraphNode_Root.h"
 #include "DialogueTreeConnectionDrawingPolicy.h"
 #include "DialogueEdGraph.h"
 #include "Modules/ModuleManager.h"
 #include "DialogueTreeEditorTypes.h"
-#include "DTCompositeNode.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "GraphEditorActions.h"
 #include "DialogueEditor.h"
@@ -76,49 +74,26 @@ void UEdGraphSchema_DialogueTree::CreateDefaultNodesForGraph(UEdGraph& Graph) co
 
 void UEdGraphSchema_DialogueTree::GetGraphContextActions(FGraphContextMenuBuilder& ContextMenuBuilder) const
 {
-	const FName PinCategory = ContextMenuBuilder.FromPin ? ContextMenuBuilder.FromPin->PinType.PinCategory : UDialogueTreeEditorTypes::PinCategory_MultipleNodes;
-	const bool bNoParent = (ContextMenuBuilder.FromPin == NULL);
-	const bool bOnlyTasks = (PinCategory == UDialogueTreeEditorTypes::PinCategory_SingleTask);
-	const bool bOnlyComposite = (PinCategory == UDialogueTreeEditorTypes::PinCategory_SingleComposite);
-	const bool bAllowComposites = bNoParent || !bOnlyTasks || bOnlyComposite;
-	const bool bAllowTasks = bNoParent || !bOnlyComposite || bOnlyTasks;
-
 	FDialogueSystemEditorModule& EditorModule = FModuleManager::GetModuleChecked<FDialogueSystemEditorModule>(TEXT("DialogueSystemEditor"));
 
 	FDialogueGraphNodeClassHelper* ClassCache = EditorModule.GetClassCache().Get();
 
-	if (bAllowComposites)
-	{
-		FCategorizedGraphActionListBuilder CompositesBuilder(TEXT("Composites"));
-		TArray<FDialogueGraphNodeClassData> NodeClasses;
-		ClassCache->GatherClasses(UDTCompositeNode::StaticClass(), NodeClasses);
-		
-		for (const auto& NodeClass : NodeClasses)
-		{
-			const FText NodeTypeName = FText::FromString(FName::NameToDisplayString(NodeClass.ToString(), false));
-			TSharedPtr<FSTSchemaAction_NewNode> AddOpAction = UDTGraphSchema::AddNewNodeAction(CompositesBuilder, NodeClass.GetCategory(), NodeTypeName, FText::GetEmpty());
-			UClass* GraphNodeClass = UDialogueGraphNode_Composite::StaticClass();
+	FCategorizedGraphActionListBuilder CompositesBuilder(TEXT("DialogueNode"));
+	TArray<FDialogueGraphNodeClassData> NodeClasses;
+	ClassCache->GatherClasses(UDTNode::StaticClass(), NodeClasses);
 
-			UDialogueTreeGraphNode* OpNode = NewObject<UDialogueTreeGraphNode>(ContextMenuBuilder.OwnerOfTemporaries, GraphNodeClass);
-			OpNode->ClassData = NodeClass;
-			AddOpAction->NodeTemplate = OpNode;
-		}
-		ContextMenuBuilder.Append(CompositesBuilder);
-	}
-	if (bAllowTasks)
+	for (const auto& NodeClass : NodeClasses)
 	{
-		// TODO: TASK;
-		FCategorizedGraphActionListBuilder TaskBuilder(TEXT("Tasks"));
-		TArray<FDialogueGraphNodeClassData> NodeClasses;
-		//ClassCache->GatherClasses(USTTaskNode::)
+		const FText NodeTypeName = FText::FromString(FName::NameToDisplayString(NodeClass.ToString(), false));
+		TSharedPtr<FSTSchemaAction_NewNode> AddOpAction = UDTGraphSchema::AddNewNodeAction(CompositesBuilder, NodeClass.GetCategory(), NodeTypeName, FText::GetEmpty());
+		UClass* GraphNodeClass = UDialogueTreeGraphNode::StaticClass();
+
+		UDialogueTreeGraphNode* OpNode = NewObject<UDialogueTreeGraphNode>(ContextMenuBuilder.OwnerOfTemporaries, GraphNodeClass);
+		OpNode->ClassData = NodeClass;
+		AddOpAction->NodeTemplate = OpNode;
 	}
-	if (bNoParent)
-	{
-		TSharedPtr<FDialogueTreeSchemaAction_AutoArrange> Action = TSharedPtr<FDialogueTreeSchemaAction_AutoArrange>(
-			new FDialogueTreeSchemaAction_AutoArrange(FText::GetEmpty(), LOCTEXT("AutoArrange", "Auto Arrange"), FText::GetEmpty(), 0)
-			);
-		ContextMenuBuilder.AddAction(Action);
-	}
+	ContextMenuBuilder.Append(CompositesBuilder);
+
 }
 
 void UEdGraphSchema_DialogueTree::GetContextMenuActions(const UEdGraph* CurrentGraph, const UEdGraphNode* InGraphNode, const UEdGraphPin* InGraphPin, class FMenuBuilder* MenuBuilder, bool bIsDebugging) const

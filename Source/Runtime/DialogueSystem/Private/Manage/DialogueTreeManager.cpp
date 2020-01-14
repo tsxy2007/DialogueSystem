@@ -3,7 +3,7 @@
 
 #include "Manage/DialogueTreeManager.h"
 #include "DialogueTree.h"
-#include "DTCompositeNode.h"
+
 
 UDialogueTreeManager::UDialogueTreeManager(const FObjectInitializer& Obj)
 	:Super(Obj)

@@ -28,19 +28,6 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void FDialogueTreeDetails::CustomizeDetails(IDetailLayoutBuilder & DetailBuilder)
 {
 	IDetailCategoryBuilder& MyCategory = DetailBuilder.EditCategory("CategoryName", FText::FromString("Extra Info"), ECategoryPriority::Default);
-	MyCategory.AddCustomRow(LOCTEXT("Extra info", "Row header name"))
-		.NameContent()
-		[
-			SNew(STextBlock)
-			.Text(LOCTEXT("Extra info", "Custom row header name"))
-		.Font(IDetailLayoutBuilder::GetDetailFont())
-		]
-	.ValueContent().MinDesiredWidth(500)
-		[
-			SNew(STextBlock)
-			.Text(LOCTEXT("Extra info", "Custom row content"))
-		.Font(IDetailLayoutBuilder::GetDetailFont())
-		];
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

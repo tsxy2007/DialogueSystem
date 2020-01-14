@@ -22,7 +22,7 @@ UWorld* UDTNode::GetWorld() const
 	return GetOuter()->GetWorld();
 }
 
-void UDTNode::InitializeNode(UDTCompositeNode* InParentNode, uint16 InExecutionIndex, uint16 InMemoryOffset, uint8 InTreeDepth)
+void UDTNode::InitializeNode(UDTNode* InParentNode, uint16 InExecutionIndex, uint16 InMemoryOffset, uint8 InTreeDepth)
 {
 	ParentNode = InParentNode;
 	ExecutionIndex = InExecutionIndex;

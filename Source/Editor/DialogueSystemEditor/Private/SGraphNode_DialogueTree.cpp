@@ -20,9 +20,7 @@
 #include "DialogueTreeColors.h"
 #include "DTGraphNode.h"
 #include "DialogueGraphNode_Root.h"
-#include "DialogueGraphNode_Service.h"
-#include "DialogueGraphNode_Composite.h"
-#include "DTCompositeNode.h"
+
 #include "DialogueEdGraph.h"
 
 #define LOCTEXT_NAMESPACE "DialogueTreeEditor"
@@ -501,7 +499,6 @@ FSlateColor SGraphNode_DialogueTree::GetBorderBackgroundColor() const
 		DTGraphNode->Pins.IsValidIndex(0) &&
 		DTGraphNode->Pins[0]->LinkedTo.Num() > 0;
 	const bool bIsDisconnected = NodeInstance && NodeInstance->GetExecutionIndex() == MAX_uint16;
-	const bool bIsService = DTGraphNode && DTGraphNode->IsA(UDialogueGraphNode_Service::StaticClass());
 	//const bool bIsRootDecorator = DTGraphNode;
 	//const bool bIsInjected = DTGraphNode&& DTGraphNode->binje
 
@@ -516,17 +513,6 @@ FSlateColor SGraphNode_DialogueTree::GetBackgroundColor() const
 	if (DTGraphNode && DTGraphNode->HasErrors())
 	{
 		NodeColor = DialogueTreeColors::NodeBody::Error;
-	}
-	else if (Cast<UDialogueGraphNode_Composite>(GraphNode))
-	{
-		check(DTGraphNode);
-		UDTCompositeNode* CompositeNodeInstance = Cast<UDTCompositeNode>(DTGraphNode->NodeInstance);
-		const bool bIsScoped = CompositeNodeInstance && false;
-		NodeColor = bIsScoped ? DialogueTreeColors::NodeBody::CompositeScoped : DialogueTreeColors::NodeBody::Composite;
-	}
-	else if (Cast<UDialogueGraphNode_Service>(GraphNode))
-	{
-		NodeColor = DialogueTreeColors::NodeBody::Service;
 	}
 	else if (Cast<UDialogueGraphNode_Root>(GraphNode) && GraphNode->Pins.IsValidIndex(0)&& GraphNode->Pins[0]->LinkedTo.Num()>0)
 	{

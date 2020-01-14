@@ -26,5 +26,5 @@ class DIALOGUESYSTEM_API UDialogueTree : public UObject
 #endif
 
 	UPROPERTY()
-	class UDTCompositeNode* RootNode;
+	class UDTNode* RootNode;
 };
