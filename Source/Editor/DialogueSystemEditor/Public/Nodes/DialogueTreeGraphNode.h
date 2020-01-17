@@ -81,45 +81,7 @@ public:
 	/** debugger flag: breakpoint is enabled */
 	uint32 bIsBreakpointEnabled : 1;
 
-	/** debugger flag: mark node as active (current state) */
-	uint32 bDebuggerMarkCurrentlyActive : 1;
-
-	/** debugger flag: mark node as active (browsing previous states) */
-	uint32 bDebuggerMarkPreviouslyActive : 1;
-
-	/** debugger flag: briefly flash active node */
-	uint32 bDebuggerMarkFlashActive : 1;
-
-	/** debugger flag: mark as succeeded search path */
-	uint32 bDebuggerMarkSearchSucceeded : 1;
-
-	/** debugger flag: mark as failed on search path */
-	uint32 bDebuggerMarkSearchFailed : 1;
-
-	/** debugger flag: mark as trigger of search path */
-	uint32 bDebuggerMarkSearchTrigger : 1;
-
-	/** debugger flag: mark as trigger of discarded search path */
-	uint32 bDebuggerMarkSearchFailedTrigger : 1;
-
-	/** debugger flag: mark as going to parent */
-	uint32 bDebuggerMarkSearchReverseConnection : 1;
-
-	/** debugger flag: mark stopped on this breakpoint */
-	uint32 bDebuggerMarkBreakpointTrigger : 1;
-
-	/** debugger variable: index on search path */
-	int32 DebuggerSearchPathIndex;
-
-	/** debugger variable: number of nodes on search path */
-	int32 DebuggerSearchPathSize;
-
-	/** debugger variable: incremented on change of debugger flags for render updates */
-	int32 DebuggerUpdateCounter;
-
-	/** used to show node's runtime description rather than static one */
-	FString DebuggerRuntimeDescription;
-
+	bool IsVisited = false;
 protected:
 
 	/** creates add decorator... submenu */

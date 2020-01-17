@@ -57,9 +57,6 @@ public:
 	void InitializeIndex(uint16 InLastExecuionIndex);
 
 	UDTNode* GetParentNode()const;
-#if USE_DialogueTREE_DEBUGGER
-	UDTNode* GetNextNode()const;
-#endif
 
 #if WITH_EDITOR
 	virtual FName GetNodeIconName()const;
@@ -125,12 +122,6 @@ FORCEINLINE UDTNode* UDTNode::GetParentNode() const
 {
 	return ParentNode;
 }
-#if USE_DialogueTREE_DEBUGGER
-FORCEINLINE UDTNode* UDTNode::GetNextNode()const
-{
-	return NextExecutionNode;
-}
-#endif
 
 FORCEINLINE uint16 UDTNode::GetExecutionIndex()const
 {

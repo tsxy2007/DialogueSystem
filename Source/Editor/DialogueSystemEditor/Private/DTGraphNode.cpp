@@ -184,7 +184,7 @@ void UDTGraphNode::AutowireNewNode(UEdGraphPin * FromPin)
 
 void UDTGraphNode::PostPlacedNewNode()
 {
-	UClass* NodeClass = UDTNode::StaticClass();// ClassData.GetClass(true);
+	UClass* NodeClass = IsValid(ClassData.GetClass(true))? ClassData.GetClass(true) : UDTNode::StaticClass();// ClassData.GetClass(true);
 	if (NodeClass && (NodeInstance == nullptr))
 	{
 		UEdGraph* MyGraph = GetGraph();

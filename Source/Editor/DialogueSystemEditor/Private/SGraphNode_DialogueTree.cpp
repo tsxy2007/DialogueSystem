@@ -149,9 +149,6 @@ private:
 
 void SGraphNode_DialogueTree::Construct(const FArguments& InArgs,UDTGraphNode* InGraphNode)
 {
-	DebuggerStateDuration = 0.0f;
-	DebuggerStateCounter = INDEX_NONE;
-	bSupperessDebuggerTriggers = false;
 	SGraphNodeDT::Construct(SGraphNodeDT::FArguments(), InGraphNode);
 }
 
@@ -470,16 +467,6 @@ FReply SGraphNode_DialogueTree::OnMouseButtonDoubleClick(const FGeometry & InMyG
 
 void SGraphNode_DialogueTree::Tick(const FGeometry & AllottedGeometry, const double InCurrentTime, const float InDeltaTime)
 {
-}
-
-void SGraphNode_DialogueTree::AddService(TSharedPtr<SGraphNode> ServiceWidget)
-{
-	ServicesBox->AddSlot().AutoHeight()
-	[
-		ServiceWidget.ToSharedRef()
-	];
-	ServicesWidgets.Add(ServiceWidget);
-	AddSubNode(ServiceWidget);
 }
 
 EVisibility SGraphNode_DialogueTree::GetDebuggerSearchFailedMarkerVisility() const

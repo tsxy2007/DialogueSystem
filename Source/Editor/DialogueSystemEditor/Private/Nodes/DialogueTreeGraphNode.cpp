@@ -20,16 +20,6 @@ UDialogueTreeGraphNode::UDialogueTreeGraphNode(const FObjectInitializer& ObjectI
 	bHasObserverError = false;
 	bHasBreakpoint = false;
 	bIsBreakpointEnabled = false;
-	bDebuggerMarkCurrentlyActive = false;
-	bDebuggerMarkPreviouslyActive = false;
-	bDebuggerMarkFlashActive = false;
-	bDebuggerMarkSearchSucceeded = false;
-	bDebuggerMarkSearchFailed = false;
-	bDebuggerMarkSearchTrigger = false;
-	bDebuggerMarkSearchFailedTrigger = false;
-	DebuggerSearchPathIndex = -1;
-	DebuggerSearchPathSize = 0;
-	DebuggerUpdateCounter = -1;
 }
 
 UDialogueEdGraph * UDialogueTreeGraphNode::GetDialogueTreeGraph()

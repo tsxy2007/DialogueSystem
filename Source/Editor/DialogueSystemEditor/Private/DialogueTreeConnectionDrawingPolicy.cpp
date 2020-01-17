@@ -25,15 +25,15 @@ void FDialogueTreeConnectionDrawingPolicy::DetermineWiringStyle(UEdGraphPin* Out
 		ApplyHoverDeemphasis(OutputPin, InputPin, Params.WireThickness, Params.WireColor);
 	}
 
-	UDialogueTreeGraphNode* FromNode = OutputPin ? Cast<UDialogueTreeGraphNode>(OutputPin->GetOwningNode()) : nullptr;
-	UDialogueTreeGraphNode* ToNode = InputPin ? Cast<UDialogueTreeGraphNode>(InputPin->GetOwningNode()) : nullptr;
-	if (ToNode && FromNode)
-	{
-		if ((ToNode->bDebuggerMarkCurrentlyActive&&FromNode->bDebuggerMarkCurrentlyActive) ||
-			(ToNode->bDebuggerMarkPreviouslyActive&&FromNode->bDebuggerMarkPreviouslyActive))
-		{
-			Params.WireThickness = 10.f;
-			Params.bDrawBubbles = true;
-		}
-	}
+	//UDialogueTreeGraphNode* FromNode = OutputPin ? Cast<UDialogueTreeGraphNode>(OutputPin->GetOwningNode()) : nullptr;
+	//UDialogueTreeGraphNode* ToNode = InputPin ? Cast<UDialogueTreeGraphNode>(InputPin->GetOwningNode()) : nullptr;
+	//if (ToNode && FromNode)
+	//{
+	//	if ((ToNode->bDebuggerMarkCurrentlyActive&&FromNode->bDebuggerMarkCurrentlyActive) ||
+	//		(ToNode->bDebuggerMarkPreviouslyActive&&FromNode->bDebuggerMarkPreviouslyActive))
+	//	{
+	//		Params.WireThickness = 10.f;
+	//		Params.bDrawBubbles = true;
+	//	}
+	//}
 }

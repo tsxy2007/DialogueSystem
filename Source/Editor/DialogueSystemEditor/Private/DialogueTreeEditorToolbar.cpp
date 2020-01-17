@@ -62,63 +62,6 @@ void FDialogueTreeEditorToolbar::AddModesToolbar(TSharedPtr<FExtender> Extender)
 		FToolBarExtensionDelegate::CreateRaw(this, &FDialogueTreeEditorToolbar::FillModesToolbar));
 }
 
-void FDialogueTreeEditorToolbar::AddDebuggerToolBar(TSharedPtr<FExtender> Extender)
-{
-	struct Local
-	{
-		static void FillToolbar(FToolBarBuilder& ToolbarBuilder, TWeakPtr<FDialogueEditor> DialogueTreeEditor)
-		{
-			TSharedPtr<FDialogueEditor> BehaviorTreeEditorPtr = DialogueTreeEditor.Pin();
-
-			const bool bCanShowDebugger = BehaviorTreeEditorPtr->IsDebuggerReady();
-			if (bCanShowDebugger)
-			{
-				TSharedRef<SWidget> SelectionBox = SNew(SComboButton)
-					//.OnGetMenuContent(BehaviorTreeEditorPtr.Get(), &FDialogueEditor::OnGetDebuggerActorsMenu)
-					.ButtonContent()
-					[
-						SNew(STextBlock)
-						.ToolTipText(LOCTEXT("SelectDebugActor", "Pick actor to debug"))
-					//.Text(BehaviorTreeEditorPtr.Get(), &FDialogueEditor::GetDebuggerActorDesc)
-					];
-
-				ToolbarBuilder.BeginSection("CachedState");
-				{
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().BackOver);
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().BackInto);
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().ForwardInto);
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().ForwardOver);
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().StepOut);
-				}
-				ToolbarBuilder.EndSection();
-				ToolbarBuilder.BeginSection("World");
-				{
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().PausePlaySession);
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().ResumePlaySession);
-					ToolbarBuilder.AddToolBarButton(FSTDebuggerCommands::Get().StopPlaySession);
-					ToolbarBuilder.AddSeparator();
-					ToolbarBuilder.AddWidget(SelectionBox);
-				}
-				ToolbarBuilder.EndSection();
-			}
-		}
-	};
-
-	TSharedPtr<FDialogueEditor> DialogueTreeEditorPtr = DialogueTreeEditor.Pin();
-	TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
-	ToolbarExtender->AddToolBarExtension("Asset", EExtensionHook::After, DialogueTreeEditorPtr->GetToolkitCommands(), FToolBarExtensionDelegate::CreateStatic(&Local::FillToolbar, DialogueTreeEditor));
-	DialogueTreeEditorPtr->AddToolbarExtender(ToolbarExtender);
-}
-
-void FDialogueTreeEditorToolbar::AddDialogueTreeToolBar(TSharedPtr<FExtender> Extender)
-{
-	check(DialogueTreeEditor.IsValid());
-	TSharedPtr<FDialogueEditor> DialogueTreeEditorPtr = DialogueTreeEditor.Pin();
-	TSharedPtr<FExtender> ToolbarExtender = MakeShareable(new FExtender);
-	ToolbarExtender->AddToolBarExtension("Asset", EExtensionHook::After, DialogueTreeEditorPtr->GetToolkitCommands(), FToolBarExtensionDelegate::CreateRaw(this, &FDialogueTreeEditorToolbar::FillDialogueTreeToolbar));
-	DialogueTreeEditorPtr->AddToolbarExtender(ToolbarExtender);
-}
-
 void FDialogueTreeEditorToolbar::FillModesToolbar(FToolBarBuilder& ToolbarBuilder)
 {
 	check(DialogueTreeEditor.IsValid());
@@ -143,53 +86,4 @@ void FDialogueTreeEditorToolbar::FillModesToolbar(FToolBarBuilder& ToolbarBuilde
 	DialogueTreeEditorPtr->AddToolbarWidget(SNew(SDialogueTreeModeSeparator));
 }
 
-void FDialogueTreeEditorToolbar::FillDebuggerToolbar(FToolBarBuilder& ToolbarBuilder)
-{
-	
-}
-
-void FDialogueTreeEditorToolbar::FillDialogueTreeToolbar(FToolBarBuilder& ToolbarBuilder)
-{
-	return;
-	check(DialogueTreeEditor.IsValid());
-	TSharedPtr<FDialogueEditor> DialogueTreeEditorPtr = DialogueTreeEditor.Pin();
-
-	if (!DialogueTreeEditorPtr->IsDebuggerReady() && DialogueTreeEditorPtr->GetCurrentMode() == FDialogueEditor::DialogueMode)
-	{
-
-		ToolbarBuilder.BeginSection("DialogueTree");
-		{
-			const FText NewTaskLabel = LOCTEXT("NewTask_Label", "New Task");
-			const FText NewTaskTooltip = LOCTEXT("NewTask_ToolTip", "Create a new task node Blueprint from a base class");
-			const FSlateIcon NewTaskIcon = FSlateIcon(FEditorStyle::GetStyleSetName(), "BTEditor.Graph.NewTask");
-
-			ToolbarBuilder.AddToolBarButton(
-				FUIAction(
-					FExecuteAction::CreateSP(DialogueTreeEditorPtr.Get(), &FDialogueEditor::CreateNewTask),
-					FCanExecuteAction::CreateSP(DialogueTreeEditorPtr.Get(), &FDialogueEditor::CanCreateNewTask),
-					FIsActionChecked(),
-					FIsActionButtonVisible::CreateSP(DialogueTreeEditorPtr.Get(), &FDialogueEditor::IsNewTaskButtonVisible)
-				),
-				NAME_None,
-				NewTaskLabel,
-				NewTaskTooltip,
-				NewTaskIcon
-			);
-
-			ToolbarBuilder.AddComboButton(
-				FUIAction(
-					FExecuteAction(),
-					FCanExecuteAction::CreateSP(DialogueTreeEditorPtr.Get(), &FDialogueEditor::CanCreateNewTask),
-					FIsActionChecked(),
-					FIsActionButtonVisible::CreateSP(DialogueTreeEditorPtr.Get(), &FDialogueEditor::IsNewTaskComboVisible)
-				),
-				 FOnGetContent::CreateSP(DialogueTreeEditorPtr.Get(), &FDialogueEditor::HandleCreateNewTaskMenu),
-				NewTaskLabel,
-				NewTaskTooltip,
-				NewTaskIcon
-			);
-		}
-		ToolbarBuilder.EndSection();
-	}
-}
 #undef LOCTEXT_NAMESPACE

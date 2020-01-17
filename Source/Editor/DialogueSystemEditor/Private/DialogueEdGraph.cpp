@@ -25,6 +25,37 @@ namespace STGraphHelpers
 
 	}
 
+	void RestNodeVisited(const UDialogueTreeGraphNode* RootEdNode)
+	{
+		if (RootEdNode == nullptr)
+		{
+			return;
+		}
+		for (int32 PinIdx = 0; PinIdx < RootEdNode->Pins.Num(); ++PinIdx)
+		{
+			UEdGraphPin* Pin = RootEdNode->Pins[PinIdx];
+			if (Pin->Direction != EGPD_Output)
+			{
+				continue;
+			}
+			for (int32 Index = 0; Index < Pin->LinkedTo.Num(); ++Index)
+			{
+				UDialogueTreeGraphNode* GraphNode = Cast<UDialogueTreeGraphNode>(Pin->LinkedTo[Index]->GetOwningNode());
+				if (GraphNode == nullptr)
+				{
+					continue;
+				}
+				if (GraphNode->IsVisited == false)
+				{
+					continue;
+				}
+				GraphNode->IsVisited = false;
+				RestNodeVisited(GraphNode);
+
+			}
+		}
+	}
+
 	void CreateChildren(UDialogueTree* STAsset, UDTNode* RootNode, const UDialogueTreeGraphNode* RootEdNode, uint16* ExcutionIndex, uint8 TreeDepth)
 	{
 		if (RootEdNode == nullptr)
@@ -33,6 +64,7 @@ namespace STGraphHelpers
 		}
 		RootNode->Children.Reset();
 		
+
 		int32 ChildIdx = 0;
 		for (int32 PinIdx = 0; PinIdx < RootEdNode->Pins.Num(); PinIdx++)
 		{
@@ -47,11 +79,14 @@ namespace STGraphHelpers
 				UDialogueTreeGraphNode* GraphNode = Cast<UDialogueTreeGraphNode>(Pin->LinkedTo[Index]->GetOwningNode());
 				if (GraphNode == nullptr)
 				{
-					continue;;
+					continue;
 				}
-				// TODO: TASK
+				if (GraphNode->IsVisited)
+				{
+					continue; 
+				}
 
-
+				GraphNode->IsVisited = true;
 				//comp
 				UDTNode* CompositeInstance = Cast<UDTNode>(GraphNode->NodeInstance);
 				if (CompositeInstance&&Cast<UDialogueTree>(CompositeInstance->GetOuter()) == nullptr)
@@ -74,15 +109,9 @@ namespace STGraphHelpers
 					ChildNode->Rename(nullptr, STAsset);
 				}
 
-				InitializeInjectedNodes(GraphNode, RootNode, *ExcutionIndex, TreeDepth, ChildIdx);
-
-				// 
-
 				ChildNode->InitializeNode(RootNode, *ExcutionIndex, 0, TreeDepth);
 				*ExcutionIndex += 1;
 
-				VerifyDecorators(GraphNode);
-				
 				if (CompositeInstance)
 				{
 					CreateChildren(STAsset, CompositeInstance, GraphNode, ExcutionIndex, TreeDepth + 1);
@@ -133,43 +162,28 @@ void UDialogueEdGraph::UpdateAsset(int32 UpdateFlags /*= 0*/)
 		{
 			continue;
 		}
-		// TODO Debugger flag;
-		//parent chain
-		Node->ParentNode = nullptr;
-		for (int32 iAux = 0; iAux < Node->Services.Num(); iAux++)
-		{
-			Node->Services[iAux]->ParentNode = Node;
-		}
-
 		// prepare node instance 
 		UDTNode* NodeInstance = Cast<UDTNode>(Node->NodeInstance);
 		if (NodeInstance)
 		{
 			NodeInstance->InitializeNode(nullptr, MAX_uint16, 0, 0);
 		}
-
 		// cache root;
 		if (RootNode == nullptr)
 		{
 			RootNode = Cast<UDialogueGraphNode_Root>(Nodes[Index]);
 		}
 	}
-
-	// we 
 	UEdGraphPin::ResolveAllPinReferences();
+
 	if (RootNode && RootNode->Pins.Num() > 0 && RootNode->Pins[0]->LinkedTo.Num() > 0)
 	{
-		UDialogueTreeGraphNode* Node = Cast<UDialogueTreeGraphNode>(RootNode->Pins[0]->LinkedTo[0]->GetOwningNode());
-		if (Node)
+		CreateSTFromGraph(RootNode);
+		if ((UpdateFlags & KeepRebuildCounter) == 0)
 		{
-			CreateSTFromGraph(Node);
-			if ((UpdateFlags & KeepRebuildCounter) == 0)
-			{
-				ModCounter++;
-			}
+			ModCounter++;
 		}
 	}
-	// TODO Update blockboardchange();
 }
 
 void UDialogueEdGraph::UpdateVersion()
@@ -204,6 +218,8 @@ void UDialogueEdGraph::CreateSTFromGraph(class UDialogueTreeGraphNode* RootEdNod
 	
 
 	// connect tree nodes;
+	RootEdNode->IsVisited = false;
+	STGraphHelpers::RestNodeVisited(RootEdNode);
 	STGraphHelpers::CreateChildren(STAsset, STAsset->RootNode, RootEdNode, &ExecutionIndex, TreeDepth + 1);
 
 	RootEdNode->bRootLevel = true;

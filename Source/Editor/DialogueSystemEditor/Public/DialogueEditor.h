@@ -85,16 +85,6 @@ public:
 	bool CanAddInputPin() const;
 	void OnRemoveInputPin();
 	bool CanRemoveInputPin() const;
-	void OnEnableBreakpoint();
-	bool CanEnableBreakpoint() const;
-	void OnToggleBreakpoint();
-	bool CanToggleBreakpoint() const;
-	void OnDisableBreakpoint();
-	bool CanDisableBreakpoint() const;
-	void OnAddBreakpoint();
-	bool CanAddBreakpoint() const;
-	void OnRemoveBreakpoint();
-	bool CanRemoveBreakpoint() const;
 
 	bool InEditingMode(bool bGraphIsEditable) const;
 	FGraphAppearanceInfo GetGraphAppearance() const;

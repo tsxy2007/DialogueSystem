@@ -51,22 +51,12 @@ public:
 	// tick this widget.
 	virtual void Tick(const FGeometry& AllottedGeometry, const double InCurrentTime, const float InDeltaTime) override;
 
-	// add server
-	void AddService(TSharedPtr<SGraphNode> ServiceWidget);
-
 	// show red
 	EVisibility GetDebuggerSearchFailedMarkerVisility()const;
 
 	FVector2D GetCachedPosition()const { return CachedPosition; }
 
 protected:
-
-	uint32 bSuppressDebuggerColor : 1;
-	uint32 bSupperessDebuggerTriggers : 1;
-
-	float DebuggerStateDuration;
-
-	int32 DebuggerStateCounter;
 
 	FLinearColor FlashColor;
 

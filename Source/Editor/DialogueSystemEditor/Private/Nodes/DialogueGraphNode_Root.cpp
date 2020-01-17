@@ -22,7 +22,7 @@ void UDialogueGraphNode_Root::PostPlacedNewNode()
 
 void UDialogueGraphNode_Root::AllocateDefaultPins()
 {
-	CreatePin(EGPD_Output, UDialogueTreeEditorTypes::PinCategory_SingleComposite, TEXT("In"));
+	CreatePin(EGPD_Output, UDialogueTreeEditorTypes::PinCategory_MultipleNodes, TEXT("In"));
 }
 
 FText UDialogueGraphNode_Root::GetNodeTitle(ENodeTitleType::Type TitleType) const

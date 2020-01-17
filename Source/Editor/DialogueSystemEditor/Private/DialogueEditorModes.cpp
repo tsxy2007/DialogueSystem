@@ -52,8 +52,6 @@ FDialogueEditorApplicationMode::FDialogueEditorApplicationMode(TSharedPtr<class 
 		);
 
 	InDialogueEditor->GetToolbarBuilder()->AddModesToolbar(ToolbarExtender);
-	InDialogueEditor->GetToolbarBuilder()->AddDialogueTreeToolBar(ToolbarExtender);
-	//InDialogueEditor->GetToolbarBuilder()->AddDebuggerToolBar(ToolbarExtender);
 }
 
 void FDialogueEditorApplicationMode::RegisterTabFactories(TSharedPtr< class FTabManager> InTabManager)

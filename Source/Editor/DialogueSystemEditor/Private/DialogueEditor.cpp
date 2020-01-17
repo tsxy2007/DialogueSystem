@@ -394,56 +394,6 @@ bool FDialogueEditor::CanRemoveInputPin() const
 	return true;
 }
 
-void FDialogueEditor::OnEnableBreakpoint()
-{
-
-}
-
-bool FDialogueEditor::CanEnableBreakpoint() const
-{
-	return true;
-}
-
-void FDialogueEditor::OnToggleBreakpoint()
-{
-
-}
-
-bool FDialogueEditor::CanToggleBreakpoint() const
-{
-	return true;
-}
-
-void FDialogueEditor::OnDisableBreakpoint()
-{
-
-}
-
-bool FDialogueEditor::CanDisableBreakpoint() const
-{
-	return true;
-}
-
-void FDialogueEditor::OnAddBreakpoint()
-{
-
-}
-
-bool FDialogueEditor::CanAddBreakpoint() const
-{
-	return true;
-}
-
-void FDialogueEditor::OnRemoveBreakpoint()
-{
-
-}
-
-bool FDialogueEditor::CanRemoveBreakpoint() const
-{
-	return true;
-}
-
 bool FDialogueEditor::InEditingMode(bool bGraphIsEditable) const
 {
 	return true;
@@ -618,42 +568,6 @@ TSharedRef<class SGraphEditor> FDialogueEditor::CreateGraphEditorWidget(UEdGraph
 			FExecuteAction::CreateSP(this, &FDialogueEditor::OnAddInputPin),
 			FCanExecuteAction::CreateSP(this,&FDialogueEditor::CanAddInputPin)
 			);
-
-		// Debug actions
-		GraphEditorCommands->MapAction(FGraphEditorCommands::Get().AddBreakpoint,
-			FExecuteAction::CreateSP(this, &FDialogueEditor::OnAddBreakpoint),
-			FCanExecuteAction::CreateSP(this, &FDialogueEditor::CanAddBreakpoint),
-			FIsActionChecked(),
-			FIsActionButtonVisible::CreateSP(this, &FDialogueEditor::CanAddBreakpoint)
-		);
-
-		GraphEditorCommands->MapAction(FGraphEditorCommands::Get().RemoveBreakpoint,
-			FExecuteAction::CreateSP(this, &FDialogueEditor::OnRemoveBreakpoint),
-			FCanExecuteAction::CreateSP(this, &FDialogueEditor::CanRemoveBreakpoint),
-			FIsActionChecked(),
-			FIsActionButtonVisible::CreateSP(this, &FDialogueEditor::CanRemoveBreakpoint)
-		);
-
-		GraphEditorCommands->MapAction(FGraphEditorCommands::Get().EnableBreakpoint,
-			FExecuteAction::CreateSP(this, &FDialogueEditor::OnEnableBreakpoint),
-			FCanExecuteAction::CreateSP(this, &FDialogueEditor::CanEnableBreakpoint),
-			FIsActionChecked(),
-			FIsActionButtonVisible::CreateSP(this, &FDialogueEditor::CanEnableBreakpoint)
-		);
-
-		GraphEditorCommands->MapAction(FGraphEditorCommands::Get().DisableBreakpoint,
-			FExecuteAction::CreateSP(this, &FDialogueEditor::OnDisableBreakpoint),
-			FCanExecuteAction::CreateSP(this, &FDialogueEditor::CanDisableBreakpoint),
-			FIsActionChecked(),
-			FIsActionButtonVisible::CreateSP(this, &FDialogueEditor::CanDisableBreakpoint)
-		);
-
-		GraphEditorCommands->MapAction(FGraphEditorCommands::Get().ToggleBreakpoint,
-			FExecuteAction::CreateSP(this, &FDialogueEditor::OnToggleBreakpoint),
-			FCanExecuteAction::CreateSP(this, &FDialogueEditor::CanToggleBreakpoint),
-			FIsActionChecked(),
-			FIsActionButtonVisible::CreateSP(this, &FDialogueEditor::CanToggleBreakpoint)
-		);
 	}
 
 	SGraphEditor::FGraphEditorEvents InEnvents;
